@@ -1,8 +1,12 @@
 Package: dScoreTest
 Title: Debiased Score Tests for Nonparametric Goodness of Fit
 Version: 0.1.0
-Authors@R:
-    person("Aditya", "Dhawan", email = "abc@abc.com", role = c("aut", "cre"))
+Author: Richard Guo [aut, cre] (<https://orcid.org/0000-0002-2081-7398>), 
+    Aditya Dhawan [aut]
+Maintainer: Richard Guo <ricguo@umich.edu>
+Authors@R: c(person("Richard", "Guo", , "ricguo@umich.edu", role = c("aut", "cre"), 
+      comment = c(ORCID = "0000-0002-2081-7398")), 
+      person("Aditya", "Dhawan", email = "abc@abc.com", role = c("aut", "cre")))
 Description: Implements debiased score tests for nonparametric goodness-of-fit
     testing. Provides tests for generalised additive models (GAMs), quantile
     GAMs, and heterogeneous treatment effects in partially linear models.
@@ -16,7 +20,6 @@ RoxygenNote: 7.3.3
 Imports:
     grf,
     mgcv,
-    qgam,
     stats
 Suggests:
     MultiSplit

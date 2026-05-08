@@ -7,7 +7,8 @@
 #' @param y Numeric response vector of length n.
 #' @param X Numeric covariate matrix of dimension n x p.
 #' @param score_fun Function with signature \code{score_fun(fit, y, X)}
-#'   returning a vector of scores (i.e., residuals) \eqn{l'(\hat{f}(x_i), y_i)}.
+#'   returning a vector of scores \eqn{l'(\hat{f}(x_i), y_i)}, which can be viewed
+#'   as negative residuals.
 #' @param weight_fun Function with signature \code{weight_fun(fit, X)} 
 #'   that computes the weight \eqn{\mathbb{E}[l''(\hat{f}(x_i), y_i) | x_i]} for each 
 #'   row \eqn{x_i} of X. 
@@ -21,10 +22,13 @@
 #'   \code{f}, it must support \code{predict_fun(f, X)} for evaluation.
 #' @param hunt.style Hunting algorithm with the following options.  
 #'   \itemize{
-#'   \item \code{'optimal'}: optimal hunting (default); 
+#'   \item \code{'optimal'}: optimal hunting (default). 
+#'      See \code{\link{hunt_optimal}}.
 #'   \item \code{'wls'}: a simpler hunting using weighted least squares, 
-#'   which can be less powerful; 
-#'   \item \code{'vanilla'}: an even simpler hunting (not recommended).}
+#'      which can be less powerful. See \code{\link{hunt_wls}}.
+#'   \item \code{'vanilla'}: a basic hunting; not 
+#'      recommended unless unable to fit an alternative model with weighted 
+#'      least squares.  See \code{\link{hunt_vanilla}}.}
 #' @param hunt.method Built-in method for hunting. Currently available:
 #'   \itemize{
 #'   \item \code{'grf'}: regression forest from package \code{grf}.
@@ -44,8 +48,12 @@
 #'   returns an \emph{alternative model} fitted in any fashion. 
 #'   The returned object \code{g} must support \code{predict_fun_alt(g, X)} 
 #'   for evaluation.
-#' @param trim.outlier.hunt If \code{TRUE} (default), outliers produced by 
-#'   the hunted function will be trimmed using Tukey's IQR rule. 
+#' @param trim.outlier.hunt If \code{TRUE} (default), 
+#' extreme values produced by the hunted function will be trimmed using Tukey's 
+#' IQR rule. 
+#' @param X.cols.hunt Integer vector selecting which columns of
+#'   \code{X} drive the hunt. Default \code{1:ncol(X)}. This is modified only 
+#'   in special settings, e.g., when there is an offset in the null model. 
 #' @param splits Numeric vector of length 2 or 3 giving the relative sizes
 #'   of the sample splits; rescaled internally to sum to one.
 #'   Default is \code{c(0.5, 0.5)}, which splits data into two halves for
@@ -55,21 +63,27 @@
 #'   \code{fit_method} (default to \code{NULL}).
 #' @param arg.wls_method Named list of additional arguments passed to
 #'   \code{wls_method} (default to \code{NULL}).
+#' @param arg.hunt_fun Extra arguments (default \code{NULL}) passed to the 
+#'   customized \code{hunt.fun}.
 #' @param predict_fun Function with signature \code{predict_fun(fit, X)}
 #'   returning a numeric vector of predictions from a fitted null model, which 
-#'   is produced by \code{fit_method()} and \code{wls_method()}. Default
-#'   \code{stats::predict}. When y is binary, it must also support signature 
+#'   is produced by \code{fit_method()} and \code{wls_method()}. 
+#'   Note that if \code{fit} is \eqn{\hat{f}}, this function should return 
+#'   \eqn{\hat{f}(X)}. Default \code{stats::predict}. 
+#'   When y is binary, it must also support signature 
 #'   \code{predict_fun(fit, X, type='response')} for returning probabilities.
 #' @param predict_fun_alt Default \code{NULL}. 
 #'   When \code{hunt.method} is not set to a built-in method, this is a function
 #'   with signature \code{predict_fun_alt(fit, X)} 
 #'   returning a numeric vector of predictions from a fitted alternative model 
 #'   produced by \code{hunt_fun()}. 
+#' @param verbose Default \code{FALSE}; information is printed if set to 
+#'   \code{TRUE}.
 #'
 #' @return An object of class \code{"dScoreTest"}.
 #'
-#' @seealso \code{\link{new_dScoreTest}}
-#'
+#' @seealso \code{\link{hunt_optimal}}, \code{\link{hunt_wls}}, 
+#'   \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
 #' @export
 dScoreTest <- function(y, X,
                        score_fun, weight_fun,
@@ -77,10 +91,12 @@ dScoreTest <- function(y, X,
                        hunt.style = "optimal",
                        hunt.method = "grf", hunt_fun = NULL,
                        trim.outlier.hunt=TRUE,
+                       X.cols.hunt=1:ncol(X),
                        splits=c(0.5, 0.5),
                        arg.fit_method=NULL, arg.wls_method=NULL, arg.hunt_fun=NULL,
                        predict_fun=stats::predict,
-                       predict_fun_alt=NULL) {
+                       predict_fun_alt=NULL, 
+                       verbose=FALSE) {
     # check input
     stopifnot(
         "score_fun must be a function" = is.function(score_fun),
@@ -94,7 +110,9 @@ dScoreTest <- function(y, X,
     )
     hunt.style <- match.arg(hunt.style, c("optimal", "wls", "vanilla"))
     if (hunt.method=="grf") {
-        message("Using grf::regression_forest() for hunting.")
+        if (verbose) {
+            message("Using grf::regression_forest() for hunting.")
+        }
         predict_fun_alt <- predict_fun_alt_grf
         if (hunt.style=="vanilla") {
             hunt_fun <- fit_alt_method_grf
@@ -104,7 +122,9 @@ dScoreTest <- function(y, X,
             arg.hunt_fun <- arg.wls_alt_method_grf
         }
     } else {
-        message("Hunting using the supplied hunt_fun().")
+        if (verbose) {
+            message("Hunting using the supplied hunt_fun().")
+        }
         stopifnot(
             "hunt_fun is not a function" = is.function(hunt_fun),
             "predict_fun_alt is not a function" = is.function(predict_fun_alt)
@@ -124,7 +144,7 @@ dScoreTest <- function(y, X,
     }
     if (hunt.style=="optimal") {
         binary.y <- all(y %in% c(0,1))
-        if (binary.y) {
+        if (binary.y && verbose) {
             message("y is binary:\nIt is assumed that predict_fun(fit, X, type='response') produces probabilities.")  
         }
         score.test <- new_dScoreTest(y, X,
@@ -134,7 +154,7 @@ dScoreTest <- function(y, X,
                          hunt.style = "optimal",
                          hunt.method = hunt.method,
                          fit_alt_method=NULL, wls_alt_method=hunt_fun,
-                         binary.y=binary.y,
+                         X.cols.hunt=X.cols.hunt, binary.y=binary.y,
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
                          predict_fun_alt=predict_fun_alt,
@@ -150,6 +170,7 @@ dScoreTest <- function(y, X,
                          hunt.style = "wls",
                          hunt.method = hunt.method,
                          fit_alt_method=NULL, wls_alt_method=hunt_fun,
+                         X.cols.hunt=X.cols.hunt, 
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
                          predict_fun_alt=predict_fun_alt,
@@ -165,6 +186,7 @@ dScoreTest <- function(y, X,
                          hunt.style = "vanilla",
                          hunt.method = hunt.method,
                          fit_alt_method=hunt_fun, wls_alt_method=NULL,
+                         X.cols.hunt=X.cols.hunt, 
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
                          predict_fun_alt=predict_fun_alt,
@@ -221,7 +243,8 @@ dScoreTest <- function(y, X,
 #'   assuming a Bernoulli response. Only consulted by
 #'   \code{hunt.style = "optimal"}.
 #' @param trim.outlier.hunt Logical. Passed to the chosen \code{hunt_*}
-#'   routine as \code{trim.outlier}. Default \code{TRUE}.
+#'   routine as \code{trim.outlier}. If \code{TRUE} (default), extreme values 
+#'   in the hunted function will be removed using Tukey's IQR rule. 
 #' @param predict_fun Function with signature \code{predict_fun(fit, X)}
 #'   returning predictions from null-model fits. Default \code{stats::predict}.
 #' @param predict_fun_alt Function with signature \code{predict_fun_alt(fit, X)}
@@ -246,7 +269,8 @@ dScoreTest <- function(y, X,
 #'       and the four \code{arg.*} lists.}
 #'   }
 #'
-#' @seealso \code{\link{dScoreTest}}
+#' @seealso \code{\link{dScoreTest}}, \code{\link{hunt_optimal}}, 
+#'   \code{\link{hunt_wls}}, \code{\link{hunt_vanilla}}
 #'
 #' @export
 new_dScoreTest <- function(y, X,
@@ -269,6 +293,7 @@ new_dScoreTest <- function(y, X,
                           arg.fit_method))
     stopifnot(hunt.style %in% c("optimal", "wls", "vanilla"))
     if (hunt.style == "optimal") {
+        # browser()
         stopifnot(is.function(wls_alt_method))
         h_hat <- hunt_optimal(wls_alt_method, wls_method, score_fun, weight_fun,
             fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE],
@@ -281,15 +306,17 @@ new_dScoreTest <- function(y, X,
             predict_fun_alt = predict_fun_alt)
     } else if (hunt.style == "wls") {
         stopifnot(is.function(wls_alt_method))
-        resids.hunt <- score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
+        # resids is (-score)
+        resids.hunt <- -1 * score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
         h_hat <- hunt_wls(wls_alt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
                           X.cols = X.cols.hunt,
                           trim.outlier = trim.outlier.hunt,
                           arg.wls_alt_method = arg.wls_alt_method,
                           predict_fun_alt = predict_fun_alt)
-    } else {
+    } else if (hunt.style == "vanilla") {
         stopifnot(is.function(fit_alt_method))
-        resids.hunt <- score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
+        # resids is (-score)
+        resids.hunt <- -1 * score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
         h_hat <- hunt_vanilla(fit_alt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
                           X.cols = X.cols.hunt,
                           trim.outlier = trim.outlier.hunt,
@@ -308,15 +335,24 @@ new_dScoreTest <- function(y, X,
     # evaluate the test 
     h.test.raw <- h_hat(X[idx.test,,drop=FALSE])
     h.test <-  h.test.raw - predict_fun(m.h.fit, X[idx.test,,drop=FALSE])
-    resids.test <- score_fun(fit.debias, y[idx.test], X[idx.test,,drop=FALSE])
+    resids.test <- -1 * score_fun(fit.debias, y[idx.test], X[idx.test,,drop=FALSE])
     
     L.test <- resids.test * h.test
     L.test.raw <- resids.test * h.test.raw
     
-    t.stat <- sum(L.test) / sqrt(length(L.test) * stats::var(L.test))
+    if (any(is.na(L.test))) {
+        warning("L contains NAs. Ignoring them.")
+    }
+    if (stats::var(L.test, na.rm=TRUE)==0) {
+        warning("L is constant. Either hunt or debiasing misbehaved.")
+    }
+    t.stat <- sum(L.test, na.rm=TRUE) / 
+        sqrt(sum(!is.na(L.test)) * stats::var(L.test, na.rm=TRUE))
+    
     p.val <- stats::pnorm(t.stat, lower.tail = FALSE)
     out <- list(t.stat=t.stat, p.val=p.val,
-                resids=resids.test, h=h.test, h.raw=h.test.raw)
+                resids=resids.test, h=h.test, h.raw=h.test.raw, 
+                L=L.test, L.raw=L.test.raw)
     out$Data <- list(X=X, y=y,
                      idx.hunt=idx.hunt, idx.debias=idx.debias, idx.test=idx.test)
     out$Call <- list(score_fun = score_fun, weight_fun = weight_fun,
@@ -335,6 +371,7 @@ new_dScoreTest <- function(y, X,
     return(out)
 }
 
+# generics for the class -------
 #' Print the score test
 #' @export
 print.dScoreTest <- function(x, ...) {
@@ -358,51 +395,65 @@ print.dScoreTest <- function(x, ...) {
 }
 
 #' Plot the score test
+#' 
+#' Diagonotic plots for the test:
+#' \enumerate{
+#'   \item Distribution of \eqn{\{L_i\}}. Extremes values under the null can result 
+#'     in bad normal approximation.  
+#'   \item Plots on debiasing.
+#' }
 #' @export
 plot.dScoreTest <- function(x, ...) {
+    old_par <- par(no.readonly = TRUE)
+    on.exit(par(old_par))
+    par(mfrow = c(1, 2),
+        mar = c(4, 4, 1, 0.5),
+        oma = c(0, 0, 0, 0))
     with(x, {
-        old_par <- par(no.readonly = TRUE)
-        on.exit(par(old_par))
-        par(mfrow = c(1, 2),
-            mar = c(4, 4, 1, 0.5),
-            oma = c(0, 0, 0, 0))
-        # left plot
-        plot(resids, h, pch=20, col="blue", cex=0.5, 
-             xlab="resid", ylab="hunt", ylim=range(c(h, h.raw)))
-        points(resids, h.raw, pch=20, col="grey", cex=0.5, 
-             xlab="resid", ylab="hunt")
+        # normalize
+        L.norm <- L / sd(L)
+        L.raw.norm <- L.raw / sd(L.raw)
+        # 1st plot
+        hist(L.norm, breaks=20, xlab="L / sd(L)", 
+             main=sprintf("mean = %.2f", mean(L.norm)))
+        abline(v=mean(L.norm), col="red", lwd=1.5)
+        # 2nd plot
+        plot(L, pch=20, cex=0.6, xlab="index", ylab="L")
+        abline(h=mean(L), col="red", lwd=1.5)
+        # 3rd plot
+        plot(h, resids, pch=20, col="blue", cex=0.5, 
+             xlab="hunt", ylab="resids", xlim=range(c(h, h.raw)))
+        points(h.raw, resids, pch=20, col="grey", cex=0.5)
         .idx.up <- which(h > h.raw)
         .idx.down <- which(h < h.raw)
         if (length(.idx.up) > 0) {
-            segments(x0=resids[.idx.up], y0=h[.idx.up], y1=h.raw[.idx.up], 
+            segments(x0=h[.idx.up], x1=h.raw[.idx.up], y0=resids[.idx.up], 
                      col="red4", lwd=0.5)
         }
         if (length(.idx.down) > 0) {
-            segments(x0=resids[.idx.down], y0=h[.idx.down], y1=h.raw[.idx.down], 
+            segments(x0=h[.idx.down], x1=h.raw[.idx.down], y0=resids[.idx.down], 
                      col="green4", lwd=0.5)
         }
-        # right plot
-        L.debiased <- resids * h
-        L.raw <- resids * h.raw
-        .ord <- order(L.debiased)
-        L.debiased <- L.debiased[.ord]
-        L.raw <- L.raw[.ord]
-        .idx.up <- which(L.debiased / sd(L.debiased) > L.raw / sd(L.raw))
-        .idx.down <- which(L.debiased / sd(L.debiased) < L.raw / sd(L.raw))
-        plot(L.debiased / sd(L.debiased), pch=18, col="blue", cex=0.7,
+        # 4th plot
+        .ord <- order(L.norm)
+        L.norm <- L.norm[.ord]
+        L.raw.norm <- L.raw.norm[.ord]
+        .idx.up <- which(L.norm > L.raw.norm)
+        .idx.down <- which(L.norm < L.raw.norm)
+        plot(L.norm, pch=18, col="blue", cex=0.7,
              xlab = "index (ordered)", ylab="L / sd(L)", 
-             ylim=range(c(L.debiased / sd(L.debiased), L.raw / sd(L.raw))))
-        points(L.raw / sd(L.raw), col="grey", pch=18, cex=0.7)
+             ylim=range(c(L.norm, L.raw.norm)))
+        points(L.raw.norm, col="grey", pch=18, cex=0.7)
         if (length(.idx.up) > 0) {
             segments(x0=.idx.up, 
-                     y0=L.debiased[.idx.up] / sd(L.debiased), 
-                     y1=L.raw[.idx.up] / sd(L.raw), 
+                     y0=L.norm[.idx.up], 
+                     y1=L.raw.norm[.idx.up], 
                      col="red4", lwd=0.5)
         }
         if (length(.idx.down) > 0) {
             segments(x0=.idx.down, 
-                     y0=L.debiased[.idx.down] / sd(L.debiased), 
-                     y1=L.raw[.idx.down] / sd(L.raw), 
+                     y0=L.norm[.idx.down], 
+                     y1=L.raw.norm[.idx.down], 
                      col="green4", lwd=0.5)
         }
         legend("bottomright", c("debiased", "raw"), pch=c(18,18), 

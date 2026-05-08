@@ -6,7 +6,7 @@
 #'   that returns a fitted \emph{alternative model} \eqn{\hat{g} \in \mathcal{G}}.
 #'   For a fitted \code{g}, it must support \code{predict_fun_alt(g, X)} for 
 #'   evaluation. 
-#' @param resids Residuals (i.e., scores) of length n from the null model.
+#' @param resids Residuals (i.e., negative scores) of length n from the null model.
 #' @param X Covariates of dim n x p.
 #' @param X.cols Subset of covariates to hunt. (Default: \code{1:ncol(X)})
 #' @param trim.outlier If \code{TRUE}, outliers in \eqn{\hat{h}(X)} will be
@@ -18,6 +18,7 @@
 #'   Default \code{stats::predict}.
 #'
 #' @return A function h of signature \code{h(X)}.
+#' @export
 hunt_vanilla <- function(fit_alt_method,
                         resids, X, X.cols=1:ncol(X),
                         trim.outlier=TRUE,
@@ -48,7 +49,7 @@ hunt_vanilla <- function(fit_alt_method,
 #'   returns a fitted \emph{alternative model} \eqn{\hat{g} \in \mathcal{G}} by
 #'   minimizing \eqn{\sum_i w_i (y_i - g(x_i))^2}. The returned object must
 #'   support \code{predict_fun_alt(g, X)} for evaluation. 
-#' @param resids Residuals (i.e., scores) of length n from the null model.
+#' @param resids Residuals (i.e., negative scores) of length n from the null model.
 #' @param X Covariates of dim n x p.
 #' @param X.cols Subset of covariates to hunt. (Default: \code{1:ncol(X)})
 #' @param trim.outlier If \code{TRUE}, outliers in \eqn{\hat{h}(X)} will be
@@ -60,6 +61,7 @@ hunt_vanilla <- function(fit_alt_method,
 #'   Default \code{stats::predict}.
 #'
 #' @return A function h with signature \code{h(X)}.
+#' @export
 hunt_wls <- function(wls_alt_method,
                          resids, X, X.cols=1:ncol(X),
                          trim.outlier=TRUE,
@@ -101,7 +103,7 @@ hunt_wls <- function(wls_alt_method,
 #'   squares, i.e., minimizing \eqn{\sum_i w_i (f(x_i) - y_i)^2}. The returned
 #'   object must support \code{predict_fun(f, X)} for evaluation. 
 #' @param score_fun Function with signature \code{score_fun(fit, y, X)}
-#'   returning a vector of scores (typically residuals) \eqn{l'(\hat{f}(x_i), y_i)}.
+#'   returning a vector of scores \eqn{l'(\hat{f}(x_i), y_i)}.
 #' @param weight_fun Function with signature \code{weight_fun(fit, X)}
 #'   that computes the weight \eqn{\mathbb{E}[l''(\hat{f}(x_i), y_i) | x_i]} for each
 #'   row \eqn{x_i} of X.
@@ -145,7 +147,7 @@ hunt_optimal <- function(wls_alt_method, wls_method,
         "X must be a matrix, array or data frame" = length(dim(X)) == 2
     )
     # get resids
-    resids <- score_fun(fit, y, X)
+    resids <- -1 * score_fun(fit, y, X)
     # floor near-zero residuals to avoid division issues
     .idx <- abs(resids) < 1e-9
     resids[.idx] <- sign(resids[.idx]) * 1e-9
@@ -196,9 +198,27 @@ hunt_optimal <- function(wls_alt_method, wls_method,
 }
 
 # helpers -------
-fit_alt_method_grf <- function(y, X, ...) grf::regression_forest(X, y, ...)
+fit_alt_method_grf <- function(y, X, ...) {
+    wls_alt_method_grf(y, X, NULL, ...)
+}
+
 wls_alt_method_grf <- function(y, X, w, ...) {
-    grf::regression_forest(X, y, sample.weights = w, ...)
+    alt.fit <- grf::regression_forest(X, y, sample.weights = w, ...)
+    # prevent degenerating to a constant function 
+    if (all(grf::variable_importance(alt.fit)[,1] == 0)) {
+        params <- alt.fit$tunable.params
+        # increase sample.fraction and refit
+        params$sample.fraction <- max(params$sample.fraction, 
+                                      params$min.node.size / length(y) * 2)
+        alt.fit <- grf::regression_forest(X, y, sample.weights = w, 
+                              sample.fraction=params$sample.fraction,
+                              mtry=params$mtry,
+                              min.node.size=params$min.node.size,
+                              alpha=params$alpha,
+                              imbalance.penalty=params$imbalance.penalty, 
+                              honesty=FALSE)
+    } 
+    return(alt.fit)
 }
 arg.fit_alt_method_grf <- list(honesty=FALSE, tune.parameters="all")
 arg.wls_alt_method_grf <- list(honesty=FALSE, tune.parameters="all")
