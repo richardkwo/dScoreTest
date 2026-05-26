@@ -262,6 +262,7 @@ dScoreTest <- function(y, X,
 #'     \item{\code{resids}}{Score residuals on the test subsample.}
 #'     \item{\code{h}}{Orthogonalised hunted direction on the test subsample.}
 #'     \item{\code{h.raw}}{Hunted direction before the outer debias projection.}
+#'     \item{\code{hunted_fun}}{The hunted function that can be applied to X.}      
 #'     \item{\code{Data}}{List with \code{X}, \code{y}, and the three index
 #'       vectors.}
 #'     \item{\code{Call}}{Named list of methods,
@@ -352,7 +353,8 @@ new_dScoreTest <- function(y, X,
     p.val <- stats::pnorm(t.stat, lower.tail = FALSE)
     out <- list(t.stat=t.stat, p.val=p.val,
                 resids=resids.test, h=h.test, h.raw=h.test.raw, 
-                L=L.test, L.raw=L.test.raw)
+                L=L.test, L.raw=L.test.raw, 
+                hunted_fun=h_hat)
     out$Data <- list(X=X, y=y,
                      idx.hunt=idx.hunt, idx.debias=idx.debias, idx.test=idx.test)
     out$Call <- list(score_fun = score_fun, weight_fun = weight_fun,
@@ -399,8 +401,13 @@ print.dScoreTest <- function(x, ...) {
 #' Diagonotic plots for the test:
 #' \enumerate{
 #'   \item Distribution of \eqn{\{L_i\}}. Extremes values under the null can result 
-#'     in bad normal approximation.  
-#'   \item Plots on debiasing.
+#'     in bad normal approximation. 
+#'     In this case, consider set \code{trim.outlier.hunt=TRUE}. 
+#'   \item Plots on debiasing. Left: resids (nagetive scores) versus the hunted
+#'     signal. A horizontal segment is drawn between each pair of raw hunted 
+#'     signal and the debiased hunted signal. If debiased gets higher, colored
+#'     in red; otherwise colored in green. Right: L = resids x hunt before and 
+#'     after debiasing. 
 #' }
 #' @export
 plot.dScoreTest <- function(x, ...) {
@@ -424,6 +431,7 @@ plot.dScoreTest <- function(x, ...) {
         plot(h, resids, pch=20, col="blue", cex=0.5, 
              xlab="hunt", ylab="resids", xlim=range(c(h, h.raw)))
         points(h.raw, resids, pch=20, col="grey", cex=0.5)
+        abline(h=0, lty=2)
         .idx.up <- which(h > h.raw)
         .idx.down <- which(h < h.raw)
         if (length(.idx.up) > 0) {
@@ -444,6 +452,7 @@ plot.dScoreTest <- function(x, ...) {
              xlab = "index (ordered)", ylab="L / sd(L)", 
              ylim=range(c(L.norm, L.raw.norm)))
         points(L.raw.norm, col="grey", pch=18, cex=0.7)
+        abline(h=0, lty=2)
         if (length(.idx.up) > 0) {
             segments(x0=.idx.up, 
                      y0=L.norm[.idx.up], 
