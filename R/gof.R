@@ -1,3 +1,7 @@
+#' Debiased score test for goodness of fit
+#' 
+#' @seealso \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}}, 
+#'   \code{\link{gof_test.gam}}
 #' @export
 gof_test <- function(object, ...) {
     UseMethod("gof_test")
@@ -187,4 +191,145 @@ gof_test.lm <- function(object, ...) {
                           family = stats::gaussian(),
                           data = stats::model.frame(object))
     gof_test.glm(glm_obj, ...)
+}
+
+# GAM --------
+
+#' Goodness-of-fit test for a GAM
+#'
+#' Debiased score test for goodness of fit of an \code{mgcv::gam} fit.
+#'
+#' @param object Fitted \code{mgcv::gam} object.
+#' 
+#' @inheritParams gof_test.glm
+#'
+#' @details
+#' Only the numeric predictors appearing in \code{stats::model.frame(object)}
+#' are exposed to the hunt; \code{X.cols.exclude} indexes into these
+#' predictor variables (not basis columns). Factor-by smooths and other
+#' non-numeric predictors are not currently supported. Formulas using
+#' \code{offset()} terms, a \code{weights} argument, or a multi-column
+#' response (e.g. \code{cbind(succ, fail) ~ ...}) are also not supported.
+#'
+#' @export
+#'
+#' @examples
+#'  set.seed(42)
+#'  dat <- mgcv::gamSim(eg=1, n=400, dist="normal", scale=2, verbose = FALSE)
+#'  dat.0 <- dat[,1:5]
+#'  # well-specified
+#'  fit.0 <- mgcv::gam(y~s(x0)+s(x1)+s(x2)+s(x3),data=dat.0)
+#'  test.0 <- gof_test(fit.0)
+#'  # f3=0, also well-specified
+#'  fit.1 <- mgcv::gam(y~s(x0)+s(x1)+s(x2),data=dat.0)
+#'  test.1 <- gof_test(fit.1)
+#'  \donttest{plot(test.1)}
+#'  # misspecified
+#'  dat.1 <- dat.0
+#'  dat.1$y <- dat.1$y * dat$f0 
+#'  fit.2 <- mgcv::gam(y~s(x0)+s(x1)+s(x2)+s(x3), data=dat.1)
+#'  test.2 <- gof_test(fit.2)
+#'  \donttest{plot(test.2)}
+#'
+gof_test.gam <- function(object,
+                         hunt.style = "optimal",
+                         hunt.method = "grf",
+                         hunt_fun = NULL,
+                         trim.outlier.hunt = TRUE,
+                         X.cols.exclude = NULL,
+                         splits = c(0.5, 0.5),
+                         arg.hunt_fun = NULL,
+                         predict_fun_alt = NULL,
+                         verbose = FALSE) {
+    # extract data
+    formula  <- stats::formula(object)
+    family   <- object$family
+    mf       <- stats::model.frame(object)
+    resp.idx <- attr(stats::terms(object), "response")
+    if (resp.idx == 0) {
+        stop("gof_test.gam requires a formula with a response variable")
+    }
+    y.name <- names(mf)[resp.idx]
+    y      <- mf[[resp.idx]]
+    if (!is.null(dim(y))) {
+        stop("multi-column responses (e.g. cbind(succ, fail) ~ ...) ",
+             "are not supported")
+    }
+    keep <- seq_along(mf) != resp.idx &
+            !names(mf) %in% c("(offset)", "(weights)")
+    if (any(names(mf) %in% c("(offset)", "(weights)"))) {
+        stop("gof_test.gam does not support offset() terms or a ",
+             "weights argument in the fitted model")
+    }
+    X <- as.matrix(mf[, keep, drop = FALSE])
+
+    # fit and wls
+    # NB: mgcv::gam evaluates `weights` (and other extras) in
+    # environment(formula). The captured formula's environment is the scope
+    # where the user's original gam was fit, where `w` doesn't exist; rebind
+    # to the local frame so the lookup succeeds.
+    fit_method <- function(y, X) {
+        data <- as.data.frame(X)
+        data[[y.name]] <- y
+        fm <- formula
+        environment(fm) <- environment()
+        mgcv::gam(fm, family = family, data = data)
+    }
+
+    wls_method <- function(y, X, w) {
+        data <- as.data.frame(X)
+        data[[y.name]] <- y
+        fm <- formula
+        environment(fm) <- environment()
+        mgcv::gam(fm, family = stats::gaussian(),
+                  weights = w, data = data)
+    }
+
+    # score and weight
+    score_fun <- function(fit, y, X) {
+        y.hat   <- as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X),
+                                  type = "response"))
+        eta.hat <- as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X),
+                                  type = "link"))
+        # (y.hat - y) / V(mu) * (d mu / d eta)
+        v        <- fit$family$variance(y.hat)
+        dmu.deta <- fit$family$mu.eta(eta.hat)
+        return((y.hat - y) / v * dmu.deta)
+    }
+
+    weight_fun <- function(fit, X) {
+        y.hat   <- as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X),
+                                  type = "response"))
+        eta.hat <- as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X),
+                                  type = "link"))
+        # (d mu / d eta)^2 / V(mu)
+        v        <- fit$family$variance(y.hat)
+        dmu.deta <- fit$family$mu.eta(eta.hat)
+        return(dmu.deta^2 / v)
+    }
+
+    # prediction
+    predict_fun <- function(fit, X, ...) {
+        as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X), ...))
+    }
+
+    # test
+    X.cols.hunt <- 1:ncol(X)
+    if (!is.null(X.cols.exclude)) {
+        if (is.character(X.cols.exclude)) {
+            X.cols.exclude <- match(X.cols.exclude, colnames(X))}
+        X.cols.hunt <- setdiff(X.cols.hunt, X.cols.exclude)
+    }
+    dScoreTest(y, X,
+               score_fun, weight_fun, fit_method, wls_method,
+               hunt.style = hunt.style,
+               hunt.method = hunt.method,
+               hunt_fun = hunt_fun,
+               trim.outlier.hunt = trim.outlier.hunt,
+               X.cols.hunt = X.cols.hunt,
+               splits = splits,
+               arg.hunt_fun = arg.hunt_fun,
+               predict_fun = predict_fun,
+               predict_fun_alt = predict_fun_alt,
+               verbose = verbose)
 }

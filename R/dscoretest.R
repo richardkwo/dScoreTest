@@ -294,7 +294,6 @@ new_dScoreTest <- function(y, X,
                           arg.fit_method))
     stopifnot(hunt.style %in% c("optimal", "wls", "vanilla"))
     if (hunt.style == "optimal") {
-        # browser()
         stopifnot(is.function(wls_alt_method))
         h_hat <- hunt_optimal(wls_alt_method, wls_method, score_fun, weight_fun,
             fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE],
@@ -378,15 +377,15 @@ new_dScoreTest <- function(y, X,
 #' @export
 print.dScoreTest <- function(x, ...) {
     cat("Debiased score test\n")
-    cat(sprintf("(hunt.style = %s, hunt.method = %s)\n\n", 
+    cat(sprintf("(hunt.style = %s, hunt.method = %s)\n", 
                 x$Call$hunt.style, x$Call$hunt.method))
     if (setequal(x$Data$idx.debias, x$Data$idx.test)) {
-        cat(sprintf("n = %d, two-way split: hunt = %d, debias & test = %d\n",
+        cat(sprintf("n = %d, two-way split: hunt = %d, debias & test = %d\n\n",
                     length(x$Data$y),
                     length(x$Data$idx.hunt),
                     length(x$Data$idx.test)))
     } else {
-        cat(sprintf("n = %d, three-way split: hunt = %d, debias = %d, test = %d\n",
+        cat(sprintf("n = %d, three-way split: hunt = %d, debias = %d, test = %d\n\n",
                     length(x$Data$y),
                     length(x$Data$idx.hunt),
                     length(x$Data$idx.debias),
@@ -442,6 +441,7 @@ plot.dScoreTest <- function(x, ...) {
             segments(x0=h[.idx.down], x1=h.raw[.idx.down], y0=resids[.idx.down], 
                      col="green4", lwd=0.5)
         }
+        abline(a=0, b=cov(h, resids) / var(h), col="blue", lwd=2)
         # 4th plot
         .ord <- order(L.norm)
         L.norm <- L.norm[.ord]
