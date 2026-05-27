@@ -1,25 +1,31 @@
 Package: dScoreTest
-Title: Debiased Score Tests for Nonparametric Goodness of Fit
+Title: Debiased Score Tests for Goodness of Fit and Model Comparison
 Version: 0.1.0
-Author: Richard Guo [aut, cre] (<https://orcid.org/0000-0002-2081-7398>), 
-    Aditya Dhawan [aut]
-Maintainer: Richard Guo <ricguo@umich.edu>
-Authors@R: c(person("Richard", "Guo", , "ricguo@umich.edu", role = c("aut", "cre"), 
-      comment = c(ORCID = "0000-0002-2081-7398")), 
-      person("Aditya", "Dhawan", email = "abc@abc.com", role = c("aut", "cre")))
-Description: Implements debiased score tests for nonparametric goodness-of-fit
-    testing. Provides tests for generalised additive models (GAMs), quantile
-    GAMs, and heterogeneous treatment effects in partially linear models.
-    The framework uses sample splitting and non-parametric hunting via
-    generalised random forests to find directions of model misspecification,
-    then forms a debiased test statistic with correct asymptotic size.
+Authors@R: c(
+    person("Richard", "Guo", email = "ricguo@umich.edu",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2081-7398")),
+    person("Aditya", "Dhawan", email = "ad950@cam.ac.uk", 
+           role = "aut"))
+Description: Debiased (Neyman-orthogonalized) score tests for assessing
+    whether a parametric or semiparametric model is well-specified, and
+    for comparing nested models. The test uses sample splitting: on a
+    held-out hunt sample, a flexible auxiliary fit finds a direction in
+    which the null model's score is non-zero; on an independent test
+    sample, the standardized score along that direction is evaluated.
+    The orthogonalization absorbs plug-in bias from estimating the
+    direction, yielding a test statistic that is asymptotically standard
+    normal under the null without requiring a parametric form for the
+    alternative. Methods are provided for 'glm', 'lm', and 'mgcv::gam'
+    fits.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
     grf,
-    mgcv,
-    stats
+    mgcv
 Suggests:
-    MultiSplit
+    MultiSplit,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

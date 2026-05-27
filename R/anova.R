@@ -1,7 +1,8 @@
 #' Compare two models using the debiased score test
 #' 
 #' @seealso \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}}, 
-#'   \code{\link{compare_models.gam}}
+#'   \code{\link{compare_models.gam}}, 
+#'   \code{\link{gof_test}}, \code{\link{dScoreTest}}
 #' 
 #' @export
 compare_models <- function(object, ...) {

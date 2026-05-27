@@ -1,0 +1,13 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^dev$
+^LICENSE\.md$
+^test_gam\.R$
+^test_hte\.R$
+^test_qgam\.R$
+^tmp\.R$
+^tmp_gam\.R$
+^dScoreTest\.svg$
+^hex\.af$
+^\.Rhistory$
+^\.claude$

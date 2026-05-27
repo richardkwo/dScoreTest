@@ -1,7 +1,8 @@
 #' Debiased score test for goodness of fit
 #' 
 #' @seealso \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}}, 
-#'   \code{\link{gof_test.gam}}
+#'   \code{\link{gof_test.gam}}, 
+#'   \code{\link{compare_models}}, \code{\link{dScoreTest}}
 #' @export
 gof_test <- function(object, ...) {
     UseMethod("gof_test")

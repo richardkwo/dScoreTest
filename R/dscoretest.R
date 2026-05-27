@@ -1,9 +1,5 @@
 #' Debiased Score Test
 #'
-#' Tests goodness of fit of a null model by hunting for a direction of
-#' misspecification using a non-parametric method, then forming a debiased
-#' test statistic via sample splitting.
-#'
 #' @param y Numeric response vector of length n.
 #' @param X Numeric covariate matrix of dimension n x p.
 #' @param score_fun Function with signature \code{score_fun(fit, y, X)}
