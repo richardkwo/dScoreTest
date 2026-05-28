@@ -10,7 +10,8 @@
   hunt.style = "optimal",
   trim.outlier.hunt = TRUE,
   splits = c(0.5, 0.5),
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ respectively.}
 
 \item{verbose}{Default \code{FALSE}; information is printed if set to
 \code{TRUE}.}
+
+\item{...}{Unused; present for S3 generic/method consistency.}
 }
 \description{
 Debiased score test of the null \code{fit.0} against the alternative

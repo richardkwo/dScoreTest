@@ -6,6 +6,11 @@
 \usage{
 \method{print}{dScoreTest}(x, ...)
 }
+\arguments{
+\item{x}{A \code{dScoreTest} object.}
+
+\item{...}{Unused, for S3 consistency.}
+}
 \description{
 Print the score test
 }

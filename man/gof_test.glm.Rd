@@ -14,7 +14,8 @@
   splits = c(0.5, 0.5),
   arg.hunt_fun = NULL,
   predict_fun_alt = NULL,
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -74,6 +75,8 @@ vector of predictions from a fitted alternative model produced by
 
 \item{verbose}{Default \code{FALSE}; information is printed if set to
 \code{TRUE}.}
+
+\item{...}{Unused; present for S3 generic/method consistency.}
 }
 \description{
 Debiased score test for goodness of fit of GLM.

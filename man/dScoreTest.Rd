@@ -148,7 +148,7 @@ provided for \code{glm} (\code{\link{gof_test.glm}}), \code{lm}
 
 \item Use \code{\link{compare_models}} to test a null model \code{fit.0}
 against an alternative supermodel \code{fit.1} in the same model class.
-Similar to \code{\link{stats:anova}}, method can be used to conduct a
+Similar to \code{\link[stats]{anova}}, method can be used to conduct a
 significance test of one or more predictors.
 In contrast with \code{\link{gof_test}}, this method targets the alternative
 \code{fit.1}.
@@ -161,6 +161,7 @@ weight, refit and hunt routines: this is the underlying engine that the
 S3 methods wrap.
 }
 \seealso{
+\code{\link{plot.dScoreTest}}, \code{\link{summary.dScoreTest}},
 \code{\link{hunt_optimal}}, \code{\link{hunt_wls}},
 \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
 }

@@ -14,7 +14,8 @@
   splits = c(0.5, 0.5),
   arg.hunt_fun = NULL,
   predict_fun_alt = NULL,
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -74,6 +75,8 @@ vector of predictions from a fitted alternative model produced by
 
 \item{verbose}{Default \code{FALSE}; information is printed if set to
 \code{TRUE}.}
+
+\item{...}{Unused; present for S3 generic/method consistency.}
 }
 \description{
 Debiased score test for goodness of fit of an \code{mgcv::gam} fit.
@@ -90,18 +93,19 @@ response (e.g. \code{cbind(succ, fail) ~ ...}) are also not supported.
  set.seed(42)
  dat <- mgcv::gamSim(eg=1, n=400, dist="normal", scale=2, verbose = FALSE)
  dat.0 <- dat[,1:5]
+ 
  # well-specified
  fit.0 <- mgcv::gam(y~s(x0)+s(x1)+s(x2)+s(x3),data=dat.0)
  test.0 <- gof_test(fit.0)
  # f3=0, also well-specified
- fit.1 <- mgcv::gam(y~s(x0)+s(x1)+s(x2),data=dat.0)
+ \donttest{fit.1 <- mgcv::gam(y~s(x0)+s(x1)+s(x2),data=dat.0)
  test.1 <- gof_test(fit.1)
- \donttest{plot(test.1)}
+ plot(test.1)}
  # misspecified
- dat.1 <- dat.0
+ \donttest{dat.1 <- dat.0
  dat.1$y <- dat.1$y * dat$f0 
  fit.2 <- mgcv::gam(y~s(x0)+s(x1)+s(x2)+s(x3), data=dat.1)
  test.2 <- gof_test(fit.2)
- \donttest{plot(test.2)}
+ plot(test.2)}
 
 }

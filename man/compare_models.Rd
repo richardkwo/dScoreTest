@@ -4,7 +4,14 @@
 \alias{compare_models}
 \title{Compare two models using the debiased score test}
 \usage{
-compare_models(object, ...)
+compare_models(fit.0, ...)
+}
+\arguments{
+\item{fit.0}{A fitted null-model object. Methods are provided for
+\code{glm}, \code{lm} and \code{mgcv::gam} fits.}
+
+\item{...}{Additional arguments passed to the dispatched method,
+notably the alternative-model fit \code{fit.1}.}
 }
 \description{
 Compare two models using the debiased score test

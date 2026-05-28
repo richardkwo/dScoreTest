@@ -1,17 +1,22 @@
 #' Compare two models using the debiased score test
-#' 
-#' @seealso \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}}, 
-#'   \code{\link{compare_models.gam}}, 
+#'
+#' @param fit.0 A fitted null-model object. Methods are provided for
+#'   \code{glm}, \code{lm} and \code{mgcv::gam} fits.
+#' @param ... Additional arguments passed to the dispatched method,
+#'   notably the alternative-model fit \code{fit.1}.
+#'
+#' @seealso \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}},
+#'   \code{\link{compare_models.gam}},
 #'   \code{\link{gof_test}}, \code{\link{dScoreTest}}
-#' 
+#'
 #' @export
-compare_models <- function(object, ...) {
+compare_models <- function(fit.0, ...) {
     UseMethod("compare_models")
 }
 
 #' @export
-compare_models.default <- function(object, ...) {
-    stop("compare_models is not implemented for class '", class(object)[1], "'")
+compare_models.default <- function(fit.0, ...) {
+    stop("compare_models is not implemented for class '", class(fit.0)[1], "'")
 }
 
 # GLM and LM -----
@@ -45,6 +50,7 @@ compare_models.default <- function(object, ...) {
 #'   respectively.
 #' @param verbose Default \code{FALSE}; information is printed if set to
 #'   \code{TRUE}.
+#' @param ... Unused; present for S3 generic/method consistency.
 #'
 #' @export
 #'
@@ -77,7 +83,8 @@ compare_models.glm <- function(fit.0, fit.1,
                                hunt.style = "optimal",
                                trim.outlier.hunt = TRUE,
                                splits = c(0.5, 0.5),
-                               verbose = FALSE) {
+                               verbose = FALSE,
+                               ...) {
     # extract data and check nesting
     stopifnot(isa(fit.1, c("glm", "lm")))
     X.0 <- stats::model.matrix(fit.0)
@@ -244,7 +251,8 @@ compare_models.gam <- function(fit.0, fit.1,
                                hunt.style = "optimal",
                                trim.outlier.hunt = TRUE,
                                splits = c(0.5, 0.5),
-                               verbose = FALSE) {
+                               verbose = FALSE,
+                               ...) {
     stopifnot(isa(fit.1, c("gam", "glm", "lm")))
     hunt.style <- match.arg(hunt.style, c("optimal", "wls"))
 

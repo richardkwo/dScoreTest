@@ -22,7 +22,7 @@
 #'
 #' \item Use \code{\link{compare_models}} to test a null model \code{fit.0}
 #'   against an alternative supermodel \code{fit.1} in the same model class. 
-#'   Similar to \code{\link{stats:anova}}, method can be used to conduct a 
+#'   Similar to \code{\link[stats]{anova}}, method can be used to conduct a 
 #'   significance test of one or more predictors. 
 #'   In contrast with \code{\link{gof_test}}, this method targets the alternative 
 #'   \code{fit.1}.

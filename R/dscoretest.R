@@ -78,7 +78,8 @@
 #'
 #' @return An object of class \code{"dScoreTest"}.
 #'
-#' @seealso \code{\link{hunt_optimal}}, \code{\link{hunt_wls}}, 
+#' @seealso \code{\link{plot.dScoreTest}}, \code{\link{summary.dScoreTest}},
+#'   \code{\link{hunt_optimal}}, \code{\link{hunt_wls}}, 
 #'   \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
 #' @export
 dScoreTest <- function(y, X,
@@ -370,6 +371,10 @@ new_dScoreTest <- function(y, X,
 
 # generics for the class -------
 #' Print the score test
+#'
+#' @param x A \code{dScoreTest} object.
+#' @param ... Unused, for S3 consistency.
+#'
 #' @export
 print.dScoreTest <- function(x, ...) {
     cat("Debiased score test\n")
@@ -392,18 +397,33 @@ print.dScoreTest <- function(x, ...) {
 }
 
 #' Plot the score test
-#' 
+#'
 #' Diagonotic plots for the test:
 #' \enumerate{
-#'   \item Distribution of \eqn{\{L_i\}}. Extremes values under the null can result 
-#'     in bad normal approximation. 
-#'     In this case, consider set \code{trim.outlier.hunt=TRUE}. 
-#'   \item Plots on debiasing. Left: resids (nagetive scores) versus the hunted
-#'     signal. A horizontal segment is drawn between each pair of raw hunted 
+#'   \item Histogram of \eqn{\{L_i\}}. 
+#'   
+#'   \item \eqn{\{L_i\}} against the index \eqn{i}, where \eqn{i} refers to the 
+#'     \eqn{i}-th observation in the full dataset. Only those \eqn{i}'s in the 
+#'     test split are drawn. The mean is drawn as a horizontal line. 
+#'     Extremes values under the null can result in bad normal approximation.
+#'     In this case, consider setting \code{trim.outlier.hunt=TRUE}.
+#'     
+#'   \item Residuals (negative scores) versus the hunted signal. 
+#'     A horizontal segment is drawn between each pair of raw hunted
 #'     signal and the debiased hunted signal. If debiased gets higher, colored
-#'     in red; otherwise colored in green. Right: L = resids x hunt before and 
-#'     after debiasing. 
+#'     in red; otherwise colored in green. Right: L = resids x hunt before and
+#'     after debiasing. The regression line (blue) should be roughly flat if 
+#'     the model is well-specified. 
+#'     
+#'   \item Normalized \eqn{\{L_i\}} drawn in order.
 #' }
+#'
+#' @param x A \code{dScoreTest} object.
+#' @param ... Further graphical parameters passed to underlying plotting
+#'   functions.
+#'
+#' @importFrom graphics par hist abline plot points segments legend
+#'
 #' @export
 plot.dScoreTest <- function(x, ...) {
     old_par <- par(no.readonly = TRUE)
@@ -420,7 +440,7 @@ plot.dScoreTest <- function(x, ...) {
              main=sprintf("mean = %.2f", mean(L.norm)))
         abline(v=mean(L.norm), col="red", lwd=1.5)
         # 2nd plot
-        plot(L, pch=20, cex=0.6, xlab="index", ylab="L")
+        plot(Data$idx.test, L, pch=20, cex=0.6, type="p", xlab="index", ylab="L")
         abline(h=mean(L), col="red", lwd=1.5)
         # 3rd plot
         plot(h, resids, pch=20, col="blue", cex=0.5, 
@@ -461,8 +481,83 @@ plot.dScoreTest <- function(x, ...) {
                      y1=L.raw.norm[.idx.down], 
                      col="green4", lwd=0.5)
         }
-        legend("bottomright", c("debiased", "raw"), pch=c(18,18), 
+        legend("bottomright", c("debiased", "raw"), pch=c(18,18),
                col=c("blue", "grey"))
     })
 }
 
+#' Summary of the score test
+#'
+#' Reports the headline statistic and p-value, the sample-split sizes, a
+#' raw-vs-debiased comparison of the test statistic (so the effect of the
+#' outer-projection debiasing step is visible), and \code{\link[base]{summary}}
+#' digests of the diagnostic vectors \code{L}, \code{L.raw}, \code{h},
+#' \code{h.raw} and \code{resids}.
+#'
+#' @param object A \code{dScoreTest} object.
+#' @param ... Unused, for S3 consistency.
+#'
+#' @return A list of class \code{"summary.dScoreTest"}.
+#'
+#' @export
+summary.dScoreTest <- function(object, ...) {
+    twoway <- setequal(object$Data$idx.debias, object$Data$idx.test)
+    # t-stat that would have resulted without the outer debias projection
+    L.raw    <- object$L.raw
+    L.raw.ok <- !is.na(L.raw)
+    t.raw    <- if (stats::var(L.raw, na.rm = TRUE) == 0) {
+        NA_real_
+    } else {
+        sum(L.raw, na.rm = TRUE) /
+            sqrt(sum(L.raw.ok) * stats::var(L.raw, na.rm = TRUE))
+    }
+    out <- list(
+        t.stat        = object$t.stat,
+        p.val         = object$p.val,
+        t.raw         = t.raw,
+        p.raw         = stats::pnorm(t.raw, lower.tail = FALSE),
+        n             = length(object$Data$y),
+        n.hunt        = length(object$Data$idx.hunt),
+        n.debias      = length(object$Data$idx.debias),
+        n.test        = length(object$Data$idx.test),
+        twoway        = twoway,
+        hunt.style    = object$Call$hunt.style,
+        hunt.method   = object$Call$hunt.method,
+        na.L          = sum(is.na(object$L)),
+        L.summary     = summary(object$L),
+        L.raw.summary = summary(object$L.raw),
+        h.summary     = summary(object$h),
+        h.raw.summary = summary(object$h.raw),
+        resids.summary = summary(object$resids)
+    )
+    class(out) <- "summary.dScoreTest"
+    out
+}
+
+#' @export
+#' @param x A \code{summary.dScoreTest} object.
+#' @rdname summary.dScoreTest
+print.summary.dScoreTest <- function(x, ...) {
+    cat("Debiased score test\n")
+    cat(sprintf("(hunt.style = %s, hunt.method = %s)\n",
+                x$hunt.style, x$hunt.method))
+    if (x$twoway) {
+        cat(sprintf("n = %d, two-way split: hunt = %d, debias & test = %d\n",
+                    x$n, x$n.hunt, x$n.test))
+    } else {
+        cat(sprintf("n = %d, three-way split: hunt = %d, debias = %d, test = %d\n",
+                    x$n, x$n.hunt, x$n.debias, x$n.test))
+    }
+    cat(sprintf("\n  Debiased:  T = %8.4f,  p = %g\n", x$t.stat, x$p.val))
+    cat(sprintf("  Raw:       T = %8.4f,  p = %g  (may contain bias)\n",
+                x$t.raw, x$p.raw))
+    if (x$na.L > 0) {
+        cat(sprintf("\nNAs in L: %d (excluded from T)\n", x$na.L))
+    }
+    cat("\nL = resids * h (debiased):\n");        print(x$L.summary)
+    cat("\nL.raw = resids * h.raw:\n");           print(x$L.raw.summary)
+    cat("\nh (debiased hunted direction):\n");    print(x$h.summary)
+    cat("\nh.raw (before outer debias):\n");      print(x$h.raw.summary)
+    cat("\nresids (score residuals on test):\n"); print(x$resids.summary)
+    invisible(x)
+}

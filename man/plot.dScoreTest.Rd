@@ -6,16 +6,30 @@
 \usage{
 \method{plot}{dScoreTest}(x, ...)
 }
+\arguments{
+\item{x}{A \code{dScoreTest} object.}
+
+\item{...}{Further graphical parameters passed to underlying plotting
+functions.}
+}
 \description{
 Diagonotic plots for the test:
 \enumerate{
-\item Distribution of \eqn{\{L_i\}}. Extremes values under the null can result
-in bad normal approximation.
-In this case, consider set \code{trim.outlier.hunt=TRUE}.
-\item Plots on debiasing. Left: resids (nagetive scores) versus the hunted
-signal. A horizontal segment is drawn between each pair of raw hunted
+\item Histogram of \eqn{\{L_i\}}.
+
+\item \eqn{\{L_i\}} against the index \eqn{i}, where \eqn{i} refers to the
+\eqn{i}-th observation in the full dataset. Only those \eqn{i}'s in the
+test split are drawn. The mean is drawn as a horizontal line.
+Extremes values under the null can result in bad normal approximation.
+In this case, consider setting \code{trim.outlier.hunt=TRUE}.
+
+\item Residuals (negative scores) versus the hunted signal.
+A horizontal segment is drawn between each pair of raw hunted
 signal and the debiased hunted signal. If debiased gets higher, colored
 in red; otherwise colored in green. Right: L = resids x hunt before and
-after debiasing.
+after debiasing. The regression line (blue) should be roughly flat if
+the model is well-specified.
+
+\item Normalized \eqn{\{L_i\}} drawn in order.
 }
 }

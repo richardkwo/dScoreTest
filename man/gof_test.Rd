@@ -6,6 +6,12 @@
 \usage{
 gof_test(object, ...)
 }
+\arguments{
+\item{object}{A fitted model object. Methods are provided for \code{glm},
+\code{lm} and \code{mgcv::gam} fits.}
+
+\item{...}{Additional arguments passed to the dispatched method.}
+}
 \description{
 Debiased score test for goodness of fit
 }
