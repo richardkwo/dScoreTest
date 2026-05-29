@@ -64,7 +64,7 @@ gof_test(fit.linear)
 #> (hunt.style = optimal, hunt.method = grf)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
-#> T = 9.7238, p-value = 1.19302e-22
+#> T = 9.4008, p-value = 2.70739e-21
 ```
 
 In fact, since $`f_3=0`$ in the data-generating mechanism, an additive
@@ -386,7 +386,7 @@ splits (cf. the harmonic-mean p-value of Wilson, 2019):
 set.seed(42)
 pvals <- replicate(200, compare_models(fit.0, fit.1)$p.val)
 1 / mean(1 / pvals)   # harmonic-mean p-value
-#> [1] 0.01681002
+#> [1] 0.01681
 ```
 
 The aggregated p-value seems to agree with the mgcv’s result.
