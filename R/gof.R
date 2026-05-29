@@ -270,6 +270,10 @@ gof_test.gam <- function(object,
         stop("gof_test.gam does not support offset() terms or a ",
              "weights argument in the fitted model")
     }
+    if (any(vapply(mf[, keep, drop = FALSE], is.factor, logical(1)))) {
+        stop("gof_test.gam does not support factor predictors; ",
+             "encode them as numeric columns (see ?gof_test.gam).")
+    }
     X <- as.matrix(mf[, keep, drop = FALSE])
 
     # fit and wls

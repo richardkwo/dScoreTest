@@ -15,7 +15,7 @@ functions.}
 \description{
 Diagonotic plots for the test:
 \enumerate{
-\item Histogram of \eqn{\{L_i\}}.
+\item Histogram of \eqn{\{L_i\}}, where \eqn{L_i = resid_i \times h_i}.
 
 \item \eqn{\{L_i\}} against the index \eqn{i}, where \eqn{i} refers to the
 \eqn{i}-th observation in the full dataset. Only those \eqn{i}'s in the
@@ -26,9 +26,8 @@ In this case, consider setting \code{trim.outlier.hunt=TRUE}.
 \item Residuals (negative scores) versus the hunted signal.
 A horizontal segment is drawn between each pair of raw hunted
 signal and the debiased hunted signal. If debiased gets higher, colored
-in red; otherwise colored in green. Right: L = resids x hunt before and
-after debiasing. The regression line (blue) should be roughly flat if
-the model is well-specified.
+in red; otherwise colored in green. A regression line (blue) with a large
+positive slope indicates the model is misspecified.
 
 \item Normalized \eqn{\{L_i\}} drawn in order.
 }

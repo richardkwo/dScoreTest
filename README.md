@@ -1,33 +1,122 @@
-# `dst` — Debiased Score Tests for Nonparametric Goodness of Fit
 
-A framework for goodness-of-fit testing where you fit a null model, "hunt" non-parametrically for a direction of misspecification (default via GRF), then form a debiased test statistic via sample splitting to recover correct asymptotic size.
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## Core engine — `R/dst.R`
+# dScoreTest
 
-- **`debiased.scoretest(y, X, score.fun, reg.method, hunt.method, proj.method, ...)`** (exported) — the generic test. Glue layer: takes user-supplied score / fit / hunt / projection callbacks and returns a one-sided p-value. Supports a 2-way split (`in.sample = TRUE`) or 3-way split, with optional multi-split aggregation via `MultiSplit::test.multisplit`.
-- **`.dst.single`** (internal) — runs one split: fit null on aux, hunt direction `h.hat`, refit + project on main half, build statistic `T = sqrt(n) * mean(L) / sd(L)` from `L = resid * (h.hat - m.h.hat)`.
+<!-- badges: start -->
 
-## Hunting — `R/hunt.R`
+<!-- badges: end -->
 
-- **`hunt.nonpara(resids, X, y, fit, ...)`** (exported) — canonical non-parametric hunter using `grf::regression_forest`. Three styles: `"vanilla"` (regress residuals on X), `"WLS"` (regress 1/resid weighted by resid^2), `"opt.WLS"` (additionally estimates the conditional variance and projects out its component for an asymptotically optimal direction). Tukey IQR clipping on outputs.
-- `.rf` / `.rf_predict` — internal wrappers that handle categorical encoding (rank by weighted mean response) before calling `grf`.
+Debiased (Neyman-orthogonalized) score tests for assessing whether a
+parametric or semiparametric model is well-specified, and for comparing
+nested models.
 
-## GAM tests — `R/gam.R`
+The test uses sample splitting: on a held-out *hunt* sample, a flexible
+auxiliary fit finds a direction in which the null model’s score is
+non-zero; on an independent *test* sample, the standardized score along
+that direction is evaluated. The orthogonalization absorbs plug-in bias
+from estimating the direction, yielding a test statistic that is
+asymptotically standard normal under the null without requiring a
+parametric form for the alternative. Methods are provided for `glm`,
+`lm`, and `mgcv::gam` fits.
 
-- **`dst.gam(y, X, formula, family, link, ...)`** (exported) — wires `mgcv::gam`/`bam` into the generic test with non-parametric hunting.
-- **`dst.gam.nested(y, X, formula.null, formula.alt, ...)`** (exported) — `anova`-style nested GAM comparison. If `formula.alt` supplied, hunts parametrically using the alt model as the learner; otherwise falls back to GRF.
-- Internals: `.gam_fit`, `.gam_score` (response-scale residuals), `.gam_proj` (weighted GAM regression of `h.hat`), `.gam_weight_fit` (link derivative), `.gam_hunt` (parametric hunt mirroring `hunt.nonpara` logic), `.gam_proj_hunt` factory.
+## Installation
 
-## Quantile GAM test — `R/qgam.R`
+Install the development version from
+[GitHub](https://github.com/richardkwo/dScoreTest) with:
 
-- **`dst.qgam(y, X, formula, qu, ...)`** (exported) — uses `qgam::qgam` for the null. Score is the quantile check derivative `1{y <= q.hat} - qu`. Weights/projections rely on a conditional density `f(q.hat(X)|X)`.
-- Internals: `.qgam_fit`, `.qgam_score`, `.qgam_proj`, `.qgam_cond_density` — quantile-forest weights x Gaussian kernel with CV-tuned bandwidth (Silverman scaled).
+``` r
+# install.packages("remotes")
+remotes::install_github("richardkwo/dScoreTest")
+```
 
-## Heterogeneous treatment effects — `R/hte.R`
+## Usage
 
-- **`dst.hte(y, Z, D, het.vars, binary.treatment, ...)`** (exported) — tests heterogeneity of the treatment effect in a partially linear model. Null permits heterogeneity in `setdiff(all, het.vars)`; hunt searches over all covariates with a T-learner.
-- Internals: `.hte_combine`/`.hte_split` (D in column 1), `.hte_fit`, `.hte_score`, `.hte_proj`, `.hte_hunt` (T-learner forests for treated/control with optional WLS / opt.WLS weighting), and `.plm_grf` — DML estimator using `grf::boosted_regression_forest` with optional cross-fitting; returns `predict` and `propensity` closures.
+Two entry points, both S3 generics that dispatch on the fitted model:
 
-## Pattern across families
+- `gof_test()` — is a fitted model well-specified, against a
+  nonparametric alternative?
+- `compare_models()` — does a nested alternative capture signal that the
+  null model misses?
 
-Every family-specific exported function (`dst.gam`, `dst.qgam`, `dst.hte`, `dst.gam.nested`) is a thin wrapper that builds the four callbacks (`reg.method`, `score.fun`, `hunt.method`, `proj.method`) and passes them to `debiased.scoretest`. The hunting functions all share a common skeleton: fit a base learner of `1/resids` weighted by `resids^2`, estimate a variance function, project onto the null space, then trim outliers via Tukey's IQR.
+``` r
+library(dScoreTest)
+library(mgcv)
+
+set.seed(42)
+dat <- gamSim(eg = 1, n = 400, dist = "normal", scale = 2, verbose = FALSE)
+```
+
+We simulate from the four-term additive truth in `mgcv::gamSim(eg = 1)`,
+`y = f0(x0) + f1(x1) + f2(x2) + f3(x3) + noise`, where `f3 = 0` and
+`f0, f1, f2` are non-linear.
+
+### Goodness of fit
+
+`gof_test()` checks the functional form of a fitted model against a
+nonparametric alternative. A well-specified non-linear additive model is
+not rejected, while forcing the model to be linear is.
+
+``` r
+fit.gam <- gam(y ~ s(x0) + s(x1) + s(x2) + s(x3), data = dat)
+gof_test(fit.gam)   # well-specified: not rejected
+#> Debiased score test: 
+#> y ~ X, with X consists of x0, x1, x2, x3.
+#> (hunt.style = optimal, hunt.method = grf)
+#> n = 400, two-way split: hunt = 200, debias & test = 200
+#> 
+#> T = 0.6274, p-value = 0.265214
+
+fit.lm <- lm(y ~ x0 + x1 + x2 + x3, data = dat)
+gof_test(fit.lm)   # misspecified: 
+#> Debiased score test: 
+#> y ~ X, with X consists of (Intercept), x0, x1, x2, x3.
+#> (hunt.style = optimal, hunt.method = grf)
+#> n = 400, two-way split: hunt = 200, debias & test = 200
+#> 
+#> T = 9.4008, p-value = 2.70739e-21
+```
+
+Note that `gof_test` only sees the covariates in the model’s formula, so
+it tests whether `E[y | covariates]` has the assumed form, not whether
+covariates are missing.
+
+### Model comparison
+
+`compare_models()` tests a null model against a nested alternative, and
+detects signal living in the alternative’s extra terms. Here the null
+drops `s(x2)` (a real, sharp effect), while the alternative includes it.
+
+``` r
+# null model: well-specified since f3 = 0 in DGM
+fit.gam.null <- gam(y ~ s(x0) + s(x1) + s(x2), data = dat)
+compare_models(fit.gam.null, fit.gam)
+#> Debiased score test: 
+#> y ~ X, with X consists of x0, x1, x2, x3.
+#> (hunt.style = optimal, hunt.method = gam)
+#> n = 400, two-way split: hunt = 200, debias & test = 200
+#> 
+#> T = 0.9375, p-value = 0.174243
+
+# null model: misspecified, missing f2
+fit.gam.mis <- gam(y ~ s(x0) + s(x1), data = dat)  
+res <- compare_models(fit.gam.mis, fit.gam)
+res
+#> Debiased score test: 
+#> y ~ X, with X consists of x0, x1, x2, x3.
+#> (hunt.style = optimal, hunt.method = gam)
+#> n = 400, two-way split: hunt = 200, debias & test = 200
+#> 
+#> T = 9.5337, p-value = 7.58703e-22
+```
+
+Both functions return a `dScoreTest` object with `print()`, `summary()`,
+and `plot()` methods. The hunt for a direction of misspecification can
+use the optimal (`hunt.style = "optimal"`, default),
+weighted-least-squares (`"wls"`), or vanilla (`"vanilla"`) algorithm.
+
+``` r
+plot(res)
+```
+
+<img src="man/figures/README-plot-1.png" alt="" width="100%" /><img src="man/figures/README-plot-2.png" alt="" width="100%" />

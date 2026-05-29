@@ -1,0 +1,112 @@
+---
+title: "Getting started with dScoreTest"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with dScoreTest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dScoreTest)
+```
+
+## What the test does
+
+`dScoreTest` implements a **debiased (Neyman-orthogonalized) score test**.
+Given a fitted null model, it asks: is there a direction in which the model's
+score is systematically non-zero? If so, the model is misspecified.
+
+The test is computed by **sample splitting**:
+
+1. On a held-out *hunt* sample, a flexible auxiliary fit searches for a
+   promising direction `h(x)` of misspecification.
+2. On an independent *test* sample, the score along that direction is
+   evaluated and standardized.
+
+The orthogonalization step absorbs the plug-in bias from estimating `h` on a
+finite sample, so the test statistic is asymptotically standard normal under
+the null --- without assuming a parametric form for the alternative. The
+p-value is one-sided (power lives in the right tail).
+
+## Two entry points
+
+- `gof_test()` --- is a fitted model well-specified, against a nonparametric
+  alternative?
+- `compare_models()` --- does a nested alternative capture signal the null
+  model misses? (An `anova()`-style comparison.)
+
+Both dispatch on the fitted object, with methods for `lm`, `glm`, and
+`mgcv::gam`. Both return a `dScoreTest` object that supports `print()`,
+`summary()`, and `plot()`.
+
+## A first example
+
+We use a small linear model so this vignette builds quickly. Take a truth
+that is linear in `x1` and `x2`:
+
+```{r gof-wellspec}
+set.seed(3)
+n <- 300
+dat <- data.frame(x1 = rnorm(n), x2 = rnorm(n))
+dat$y <- 1 + dat$x1 + dat$x2 + rnorm(n)
+
+fit <- lm(y ~ x1 + x2, data = dat)
+gof_test(fit)
+```
+
+The p-value is large: the linear model is correctly specified, and the test
+does not reject.
+
+Now introduce a quadratic effect the linear model cannot capture:
+
+```{r gof-misspec}
+dat$y2 <- 1 + dat$x1 + dat$x1^2 + dat$x2 + rnorm(n)
+fit.mis <- lm(y2 ~ x1 + x2, data = dat)
+gof_test(fit.mis)
+```
+
+The p-value is small: the test detects that `E[y2 | x1, x2]` is not linear in
+`x1`.
+
+## Comparing nested models
+
+`compare_models()` tests a null model against a richer alternative that
+contains it. We add the quadratic term as an explicit column:
+
+```{r compare}
+dat$x1sq <- dat$x1^2
+fit.0 <- lm(y2 ~ x1 + x2,        data = dat)   # null (linear)
+fit.1 <- lm(y2 ~ x1 + x1sq + x2, data = dat)   # alternative (superset)
+compare_models(fit.0, fit.1)
+```
+
+The alternative's quadratic term captures the signal, so the comparison
+rejects.
+
+(`compare_models()` refits the models from their model frames, so supply
+extra terms as plain columns --- e.g. `x1sq` above --- rather than as
+in-formula transformations like `poly(x1, 2)` or `I(x1^2)`.)
+
+## Choosing the hunt
+
+The search for a direction of misspecification (the "hunt") has three styles,
+passed via `hunt.style`:
+
+- `"optimal"` (default) --- the asymptotically optimal direction.
+- `"wls"` --- a simpler weighted-least-squares hunt; can be less powerful.
+- `"vanilla"` --- a basic hunt; a fallback.
+
+## Where to go next
+
+The default hunt for `gof_test()` uses a regression forest (`grf`), which
+makes it a genuinely nonparametric goodness-of-fit test. See the
+*Goodness of fit and model comparison for GAMs* article for worked examples
+with `mgcv::gam`, including diagnostics via `plot()`.

@@ -166,7 +166,7 @@ S3 methods wrap.
 \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
 }
 \author{
-\strong{Maintainer}: Richard Guo \email{ricguo@umich.edu} (\href{https://orcid.org/0000-0002-2081-7398}{ORCID})
+\strong{Maintainer}: F. Richard Guo \email{ricguo@umich.edu} (\href{https://orcid.org/0000-0002-2081-7398}{ORCID})
 
 Authors:
 \itemize{

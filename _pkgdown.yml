@@ -1,0 +1,36 @@
+url: https://richardkwo.github.io/dScoreTest
+template:
+  bootstrap: 5
+
+reference:
+- title: Goodness-of-fit tests
+  desc: Test whether a fitted model is well-specified against a nonparametric alternative.
+  contents:
+  - gof_test
+  - gof_test.glm
+  - gof_test.lm
+  - gof_test.gam
+- title: Model comparison
+  desc: Test a null model against a nested alternative in the same model class.
+  contents:
+  - compare_models
+  - compare_models.glm
+  - compare_models.lm
+  - compare_models.gam
+- title: Engine and methods
+  desc: The underlying debiased score test and its S3 methods.
+  contents:
+  - dScoreTest
+  - new_dScoreTest
+  - print.dScoreTest
+  - plot.dScoreTest
+  - summary.dScoreTest
+- title: Hunt algorithms
+  desc: Routines that hunt for a direction of misspecification.
+  contents:
+  - hunt_optimal
+  - hunt_wls
+  - hunt_vanilla
+- title: Package
+  contents:
+  - dScoreTest-package

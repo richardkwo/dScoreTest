@@ -2,7 +2,7 @@ Package: dScoreTest
 Title: Debiased Score Tests for Goodness of Fit and Model Comparison
 Version: 0.1.0
 Authors@R: c(
-    person("Richard", "Guo", email = "ricguo@umich.edu",
+    person("F. Richard", "Guo", email = "ricguo@umich.edu",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2081-7398")),
     person("Aditya", "Dhawan", email = "ad950@cam.ac.uk", 
@@ -26,6 +26,10 @@ Imports:
     grf,
     mgcv
 Suggests:
+    knitr,
     MultiSplit,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
+Config/Needs/website: rmarkdown

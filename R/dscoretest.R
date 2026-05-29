@@ -359,6 +359,7 @@ new_dScoreTest <- function(y, X,
                         hunt.method = hunt.method, 
                         fit_alt_method = fit_alt_method,
                         wls_alt_method = wls_alt_method,
+                        X.cols.hunt = X.cols.hunt,
                         predict_fun = predict_fun,
                         predict_fun_alt = predict_fun_alt,
                         arg.fit_method = arg.fit_method,
@@ -377,7 +378,9 @@ new_dScoreTest <- function(y, X,
 #'
 #' @export
 print.dScoreTest <- function(x, ...) {
-    cat("Debiased score test\n")
+    cat("Debiased score test: \n")
+    cat(sprintf("y ~ X, with X consists of %s.\n", 
+                paste(colnames(x$Data$X)[x$Call$X.cols.hunt], collapse=", ")))
     cat(sprintf("(hunt.style = %s, hunt.method = %s)\n", 
                 x$Call$hunt.style, x$Call$hunt.method))
     if (setequal(x$Data$idx.debias, x$Data$idx.test)) {
@@ -400,7 +403,7 @@ print.dScoreTest <- function(x, ...) {
 #'
 #' Diagonotic plots for the test:
 #' \enumerate{
-#'   \item Histogram of \eqn{\{L_i\}}. 
+#'   \item Histogram of \eqn{\{L_i\}}, where \eqn{L_i = resid_i \times h_i}. 
 #'   
 #'   \item \eqn{\{L_i\}} against the index \eqn{i}, where \eqn{i} refers to the 
 #'     \eqn{i}-th observation in the full dataset. Only those \eqn{i}'s in the 
@@ -411,9 +414,8 @@ print.dScoreTest <- function(x, ...) {
 #'   \item Residuals (negative scores) versus the hunted signal. 
 #'     A horizontal segment is drawn between each pair of raw hunted
 #'     signal and the debiased hunted signal. If debiased gets higher, colored
-#'     in red; otherwise colored in green. Right: L = resids x hunt before and
-#'     after debiasing. The regression line (blue) should be roughly flat if 
-#'     the model is well-specified. 
+#'     in red; otherwise colored in green. A regression line (blue) with a large 
+#'     positive slope indicates the model is misspecified. 
 #'     
 #'   \item Normalized \eqn{\{L_i\}} drawn in order.
 #' }
@@ -441,6 +443,7 @@ plot.dScoreTest <- function(x, ...) {
         abline(v=mean(L.norm), col="red", lwd=1.5)
         # 2nd plot
         plot(Data$idx.test, L, pch=20, cex=0.6, type="p", xlab="index", ylab="L")
+        abline(h=0, lty=2)
         abline(h=mean(L), col="red", lwd=1.5)
         # 3rd plot
         plot(h, resids, pch=20, col="blue", cex=0.5, 

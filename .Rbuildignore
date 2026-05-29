@@ -11,3 +11,8 @@
 ^hex\.af$
 ^\.Rhistory$
 ^\.claude$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^README\.Rmd$
+^vignettes/articles$
