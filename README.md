@@ -1,15 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dScoreTest
+# dScoreTest <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
 Debiased (Neyman-orthogonalized) score tests for assessing whether a
-parametric or semiparametric model is well-specified, and for comparing
-nested models.
+parametric or semiparametric regression model is well-specified and for
+comparing nested models.
 
 The test uses sample splitting: on a held-out *hunt* sample, a flexible
 auxiliary fit finds a direction in which the null model’s score is
@@ -74,7 +74,7 @@ gof_test(fit.lm)   # misspecified:
 #> (hunt.style = optimal, hunt.method = grf)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
-#> T = 9.4008, p-value = 2.70739e-21
+#> T = 9.7238, p-value = 1.19302e-22
 ```
 
 Note that `gof_test` only sees the covariates in the model’s formula, so

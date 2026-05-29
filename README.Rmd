@@ -13,13 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# dScoreTest
+# dScoreTest <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 Debiased (Neyman-orthogonalized) score tests for assessing whether a
-parametric or semiparametric model is well-specified, and for comparing
+parametric or semiparametric regression model is well-specified and for comparing
 nested models.
 
 The test uses sample splitting: on a held-out *hunt* sample, a flexible

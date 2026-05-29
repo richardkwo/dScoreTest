@@ -18,6 +18,8 @@ Description: Debiased (Neyman-orthogonalized) score tests for assessing
     normal under the null without requiring a parametric form for the
     alternative. Methods are provided for 'glm', 'lm', and 'mgcv::gam'
     fits.
+URL: https://unbiased.co.in/dScoreTest, https://github.com/richardkwo/dScoreTest
+BugReports: https://github.com/richardkwo/dScoreTest/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
