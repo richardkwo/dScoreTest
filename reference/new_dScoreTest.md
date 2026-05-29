@@ -2,7 +2,7 @@
 
 Internal worker that builds a `dScoreTest` object from a fixed three-way
 (or two-way) sample split. Called by
-[`dScoreTest`](https://richardkwo.github.io/dScoreTest/reference/dScoreTest.md).
+[`dScoreTest`](https://unbiased.co.in/dScoreTest/reference/dScoreTest.md).
 Splits, hunting algorithm, and predict semantics are taken as fully
 resolved arguments — no defaults are inferred from the data.
 
@@ -178,7 +178,7 @@ A list of class `"dScoreTest"` with elements:
 
 ## See also
 
-[`dScoreTest`](https://richardkwo.github.io/dScoreTest/reference/dScoreTest.md),
-[`hunt_optimal`](https://richardkwo.github.io/dScoreTest/reference/hunt_optimal.md),
-[`hunt_wls`](https://richardkwo.github.io/dScoreTest/reference/hunt_wls.md),
-[`hunt_vanilla`](https://richardkwo.github.io/dScoreTest/reference/hunt_vanilla.md)
+[`dScoreTest`](https://unbiased.co.in/dScoreTest/reference/dScoreTest.md),
+[`hunt_optimal`](https://unbiased.co.in/dScoreTest/reference/hunt_optimal.md),
+[`hunt_wls`](https://unbiased.co.in/dScoreTest/reference/hunt_wls.md),
+[`hunt_vanilla`](https://unbiased.co.in/dScoreTest/reference/hunt_vanilla.md)

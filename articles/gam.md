@@ -7,9 +7,9 @@ library(mgcv)
 ```
 
 This article walks through
-[`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+[`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
 and
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 on [`mgcv::gam`](https://rdrr.io/pkg/mgcv/man/gam.html) fits. Because
 these examples lean on `grf` and refit GAMs across sample splits, they
 are slower than the package vignette — this is a web-only article (not
@@ -32,7 +32,7 @@ dat <- gamSim(eg = 1, n = 400, dist = "normal", scale = 2, verbose = FALSE)
 
 ### Goodness of fit
 
-[`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+[`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
 checks the *functional form* of a fitted model against a nonparametric
 alternative built with a regression forest. A correctly specified
 additive smooth model is not rejected:
@@ -109,12 +109,12 @@ simply because `gof_test` does not see predictors `x_1` and `x_2` which
 do not appear in the model’s formula (you can see this from the printout
 `y ~ X, with X consists of x0, x1`). To ask whether one or more
 *omitted* covariates carries signal, use
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md),
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md),
 which gives the hunt access to the alternative’s covariates.
 
 ### Model comparison
 
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 tests a null model against a larger alternative model and detects signal
 living in the alternative’s extra terms. Similar to ANOVA, this can be
 used to test significance of one or more predictors. For example, we can
@@ -332,7 +332,7 @@ There is no indication of misspecification.
 
 ### Testing for the interaction
 
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 tests the additive null `fit.0` against the interaction alternative
 `fit.1`:
 
@@ -386,7 +386,7 @@ splits (cf. the harmonic-mean p-value of Wilson, 2019):
 set.seed(42)
 pvals <- replicate(200, compare_models(fit.0, fit.1)$p.val)
 1 / mean(1 / pvals)   # harmonic-mean p-value
-#> [1] 0.01680784
+#> [1] 0.01681002
 ```
 
 The aggregated p-value seems to agree with the mgcv’s result.

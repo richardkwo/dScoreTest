@@ -26,10 +26,10 @@ alternative. The p-value is one-sided (power lives in the right tail).
 
 ## Two entry points
 
-- [`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+- [`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
   — is a fitted model well-specified, against a nonparametric
   alternative?
-- [`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+- [`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
   — does a nested alternative capture signal the null model misses? (An
   [`anova()`](https://rdrr.io/r/stats/anova.html)-style comparison.)
 
@@ -85,7 +85,7 @@ linear in `x1`.
 
 ## Comparing nested models
 
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 tests a null model against a richer alternative that contains it. We add
 the quadratic term as an explicit column:
 
@@ -106,7 +106,7 @@ compare_models(fit.0, fit.1)
 The alternative’s quadratic term captures the signal, so the comparison
 rejects.
 
-([`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+([`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 refits the models from their model frames, so supply extra terms as
 plain columns — e.g. `x1sq` above — rather than as in-formula
 transformations like `poly(x1, 2)` or `I(x1^2)`.)
@@ -123,7 +123,7 @@ styles, passed via `hunt.style`:
 ## Where to go next
 
 The default hunt for
-[`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+[`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
 uses a regression forest (`grf`), which makes it a genuinely
 nonparametric goodness-of-fit test. See the *Goodness of fit and model
 comparison for GAMs* article for worked examples with

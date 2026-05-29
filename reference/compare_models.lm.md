@@ -3,7 +3,7 @@
 Debiased score test of the null `fit.0` against the alternative `fit.1`.
 Both are internally refit as Gaussian-family GLMs and the call is
 dispatched to
-[`compare_models.glm`](https://richardkwo.github.io/dScoreTest/reference/compare_models.glm.md).
+[`compare_models.glm`](https://unbiased.co.in/dScoreTest/reference/compare_models.glm.md).
 
 ## Usage
 
@@ -22,12 +22,12 @@ compare_models(fit.0, fit.1, ...)
 
   The alternative model as a fitted `lm` object. Must be a supermodel of
   `fit.0`; see
-  [`compare_models.glm`](https://richardkwo.github.io/dScoreTest/reference/compare_models.glm.md).
+  [`compare_models.glm`](https://unbiased.co.in/dScoreTest/reference/compare_models.glm.md).
 
 - ...:
 
   Additional arguments passed to
-  [`compare_models.glm`](https://richardkwo.github.io/dScoreTest/reference/compare_models.glm.md).
+  [`compare_models.glm`](https://unbiased.co.in/dScoreTest/reference/compare_models.glm.md).
 
 ## Examples
 

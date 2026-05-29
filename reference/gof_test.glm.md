@@ -32,15 +32,15 @@ gof_test(
   Hunting algorithm with the following options.
 
   - `'optimal'`: optimal hunting (default). See
-    [`hunt_optimal`](https://richardkwo.github.io/dScoreTest/reference/hunt_optimal.md).
+    [`hunt_optimal`](https://unbiased.co.in/dScoreTest/reference/hunt_optimal.md).
 
   - `'wls'`: a simpler hunting using weighted least squares, which can
     be less powerful. See
-    [`hunt_wls`](https://richardkwo.github.io/dScoreTest/reference/hunt_wls.md).
+    [`hunt_wls`](https://unbiased.co.in/dScoreTest/reference/hunt_wls.md).
 
   - `'vanilla'`: a basic hunting; not recommended unless unable to fit
     an alternative model with weighted least squares. See
-    [`hunt_vanilla`](https://richardkwo.github.io/dScoreTest/reference/hunt_vanilla.md).
+    [`hunt_vanilla`](https://unbiased.co.in/dScoreTest/reference/hunt_vanilla.md).
 
 - hunt.method:
 

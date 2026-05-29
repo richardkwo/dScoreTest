@@ -22,8 +22,8 @@ compare_models(fit.0, ...)
 
 ## See also
 
-[`compare_models.glm`](https://richardkwo.github.io/dScoreTest/reference/compare_models.glm.md),
-[`compare_models.lm`](https://richardkwo.github.io/dScoreTest/reference/compare_models.lm.md),
-[`compare_models.gam`](https://richardkwo.github.io/dScoreTest/reference/compare_models.gam.md),
-[`gof_test`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md),
-[`dScoreTest`](https://richardkwo.github.io/dScoreTest/reference/dScoreTest.md)
+[`compare_models.glm`](https://unbiased.co.in/dScoreTest/reference/compare_models.glm.md),
+[`compare_models.lm`](https://unbiased.co.in/dScoreTest/reference/compare_models.lm.md),
+[`compare_models.gam`](https://unbiased.co.in/dScoreTest/reference/compare_models.gam.md),
+[`gof_test`](https://unbiased.co.in/dScoreTest/reference/gof_test.md),
+[`dScoreTest`](https://unbiased.co.in/dScoreTest/reference/dScoreTest.md)

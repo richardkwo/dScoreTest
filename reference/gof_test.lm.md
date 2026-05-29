@@ -2,7 +2,7 @@
 
 Debiased score test for goodness of fit of an `lm`. Internally refits
 the model as a Gaussian-family GLM and dispatches to
-[`gof_test.glm`](https://richardkwo.github.io/dScoreTest/reference/gof_test.glm.md).
+[`gof_test.glm`](https://unbiased.co.in/dScoreTest/reference/gof_test.glm.md).
 
 ## Usage
 
@@ -20,7 +20,7 @@ gof_test(object, ...)
 - ...:
 
   Additional arguments passed to
-  [`gof_test.glm`](https://richardkwo.github.io/dScoreTest/reference/gof_test.glm.md).
+  [`gof_test.glm`](https://unbiased.co.in/dScoreTest/reference/gof_test.glm.md).
 
 ## Examples
 

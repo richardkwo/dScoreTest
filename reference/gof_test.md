@@ -21,8 +21,8 @@ gof_test(object, ...)
 
 ## See also
 
-[`gof_test.glm`](https://richardkwo.github.io/dScoreTest/reference/gof_test.glm.md),
-[`gof_test.lm`](https://richardkwo.github.io/dScoreTest/reference/gof_test.lm.md),
-[`gof_test.gam`](https://richardkwo.github.io/dScoreTest/reference/gof_test.gam.md),
-[`compare_models`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md),
-[`dScoreTest`](https://richardkwo.github.io/dScoreTest/reference/dScoreTest.md)
+[`gof_test.glm`](https://unbiased.co.in/dScoreTest/reference/gof_test.glm.md),
+[`gof_test.lm`](https://unbiased.co.in/dScoreTest/reference/gof_test.lm.md),
+[`gof_test.gam`](https://unbiased.co.in/dScoreTest/reference/gof_test.gam.md),
+[`compare_models`](https://unbiased.co.in/dScoreTest/reference/compare_models.md),
+[`dScoreTest`](https://unbiased.co.in/dScoreTest/reference/dScoreTest.md)

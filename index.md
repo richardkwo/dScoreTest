@@ -1,8 +1,8 @@
 # dScoreTest
 
 Debiased (Neyman-orthogonalized) score tests for assessing whether a
-parametric or semiparametric model is well-specified, and for comparing
-nested models.
+parametric or semiparametric regression model is well-specified and for
+comparing nested models.
 
 The test uses sample splitting: on a held-out *hunt* sample, a flexible
 auxiliary fit finds a direction in which the null model’s score is
@@ -28,10 +28,10 @@ remotes::install_github("richardkwo/dScoreTest")
 
 Two entry points, both S3 generics that dispatch on the fitted model:
 
-- [`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+- [`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
   — is a fitted model well-specified, against a nonparametric
   alternative?
-- [`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+- [`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
   — does a nested alternative capture signal that the null model misses?
 
 ``` r
@@ -49,7 +49,7 @@ We simulate from the four-term additive truth in `mgcv::gamSim(eg = 1)`,
 
 ### Goodness of fit
 
-[`gof_test()`](https://richardkwo.github.io/dScoreTest/reference/gof_test.md)
+[`gof_test()`](https://unbiased.co.in/dScoreTest/reference/gof_test.md)
 checks the functional form of a fitted model against a nonparametric
 alternative. A well-specified non-linear additive model is not rejected,
 while forcing the model to be linear is.
@@ -72,7 +72,7 @@ gof_test(fit.lm)   # misspecified:
 #> (hunt.style = optimal, hunt.method = grf)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
-#> T = 9.4008, p-value = 2.70739e-21
+#> T = 9.7238, p-value = 1.19302e-22
 ```
 
 Note that `gof_test` only sees the covariates in the model’s formula, so
@@ -81,7 +81,7 @@ covariates are missing.
 
 ### Model comparison
 
-[`compare_models()`](https://richardkwo.github.io/dScoreTest/reference/compare_models.md)
+[`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md)
 tests a null model against a nested alternative, and detects signal
 living in the alternative’s extra terms. Here the null drops `s(x2)` (a
 real, sharp effect), while the alternative includes it.
