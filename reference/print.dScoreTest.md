@@ -18,3 +18,8 @@ print(x, ...)
 - ...:
 
   Unused, for S3 consistency.
+
+## Value
+
+The input `x`, invisibly. Called for the side effect of printing a
+summary of the test to the console.

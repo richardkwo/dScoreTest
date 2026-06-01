@@ -43,6 +43,7 @@
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -71,7 +72,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">dScoreTest</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://unbiased.co.in/dScoreTest">dScoreTest</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mgcv</span><span class="op">)</span></span></code></pre></div>
 <p>This article walks through <code><a href="../reference/gof_test.html">gof_test()</a></code> and
 <code><a href="../reference/compare_models.html">compare_models()</a></code> on <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam</a></code> fits. Because
@@ -123,7 +124,7 @@ the model is rejected.</p>
 <span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; T = 9.4008, p-value = 2.70739e-21</span></span></code></pre></div>
+<span><span class="co">#&gt; T = 9.7238, p-value = 1.19302e-22</span></span></code></pre></div>
 <p>In fact, since
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f_3=0</annotation></semantics></math>
 in the data-generating mechanism, an additive regression model without

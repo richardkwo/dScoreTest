@@ -66,6 +66,18 @@ compare_models(
 
   Unused; present for S3 generic/method consistency.
 
+## Value
+
+An object of class `"dScoreTest"`: a list whose key elements are the
+debiased test statistic `t.stat` and the one-sided p-value `p.val`
+(right tail of the standard normal), along with the test-set score
+residuals, the hunted direction, and the call. It has
+[`print`](https://unbiased.co.in/dScoreTest/reference/print.dScoreTest.md),
+[`summary`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
+and
+[`plot`](https://unbiased.co.in/dScoreTest/reference/plot.dScoreTest.md)
+methods.
+
 ## Details
 
 Nesting is checked by predictor-variable name only, not by basis span:

@@ -2,7 +2,7 @@
 
 ## Authors
 
-- **F. Richard Guo**. Author, maintainer.
+- **F. Richard Guo**. Author, maintainer, copyright holder.
   [](https://orcid.org/0000-0002-2081-7398)
 
 - **Aditya Dhawan**. Author.

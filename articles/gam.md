@@ -64,7 +64,7 @@ gof_test(fit.linear)
 #> (hunt.style = optimal, hunt.method = grf)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
-#> T = 9.4008, p-value = 2.70739e-21
+#> T = 9.7238, p-value = 1.19302e-22
 ```
 
 In fact, since $`f_3=0`$ in the data-generating mechanism, an additive

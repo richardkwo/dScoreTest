@@ -1,4 +1,4 @@
 # License
 
     YEAR: 2026
-    COPYRIGHT HOLDER: Richard Guo
+    COPYRIGHT HOLDER: F. Richard Guo

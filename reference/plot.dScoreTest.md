@@ -35,3 +35,8 @@ plot(x, ...)
 - ...:
 
   Further graphical parameters passed to underlying plotting functions.
+
+## Value
+
+No return value; called for its side effect of producing the diagnostic
+plots described above.

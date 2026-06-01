@@ -22,6 +22,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/richardkwo/dScoreTest/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -61,12 +62,94 @@ notably the alternative-model fit <code>fit.1</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>An object of class <code>"dScoreTest"</code>: a list whose key elements
+are the debiased test statistic <code>t.stat</code> and the one-sided p-value
+<code>p.val</code> (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+<code><a href="print.dScoreTest.html">print</a></code>,
+<code><a href="summary.dScoreTest.html">summary</a></code> and
+<code><a href="plot.dScoreTest.html">plot</a></code> methods.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="compare_models.glm.html">compare_models.glm</a></code>, <code><a href="compare_models.lm.html">compare_models.lm</a></code>,
 <code><a href="compare_models.gam.html">compare_models.gam</a></code>,
 <code><a href="gof_test.html">gof_test</a></code>, <code><a href="dScoreTest.html">dScoreTest</a></code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">500</span></span></span>
+<span class="r-in"><span> <span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, x3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">dat</span><span class="op">$</span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">x3</span> <span class="op">+</span> <span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x1</span> <span class="op">+</span> <span class="va">dat</span><span class="op">$</span><span class="va">x2</span><span class="op">)</span> <span class="op">/</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x1</span> <span class="op">+</span> <span class="va">dat</span><span class="op">$</span><span class="va">x3</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span> <span class="va">fit.0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x3</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              data <span class="op">=</span> <span class="va">dat</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">fit.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              data <span class="op">=</span> <span class="va">dat</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>              </span></span>
+<span class="r-in"><span> <span class="co"># test fit.0 against fit.1: should not be rejected</span></span></span>
+<span class="r-in"><span> <span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Debiased score test: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y ~ X, with X consists of (Intercept), x1, x2, x3.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (hunt.style = optimal, hunt.method = glm)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n = 500, two-way split: hunt = 250, debias &amp; test = 250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> T = -1.7883, p-value = 0.963138</span>
+<span class="r-in"><span> <span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span>, hunt.style<span class="op">=</span><span class="st">"wls"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Debiased score test: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y ~ X, with X consists of (Intercept), x1, x2, x3.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (hunt.style = wls, hunt.method = glm)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n = 500, two-way split: hunt = 250, debias &amp; test = 250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> T = 0.9726, p-value = 0.165383</span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis of Deviance Table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: y ~ x1 + x3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: y ~ x1 + x2 + x3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Resid. Df Resid. Dev Df Deviance      F Pr(&gt;F)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       497     4503.2                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       496     4502.9  1    0.241 0.0265 0.8706</span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co"># test a misspecified null model: should be rejected</span></span></span>
+<span class="r-in"><span> <span class="va">fit.00</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x2</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              data <span class="op">=</span> <span class="va">dat</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.00</span>, <span class="va">fit.1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Debiased score test: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y ~ X, with X consists of (Intercept), x1, x2, x3.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (hunt.style = optimal, hunt.method = glm)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n = 500, two-way split: hunt = 250, debias &amp; test = 250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> T = 2.7297, p-value = 0.00316957</span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.00</span>, <span class="va">fit.1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="compare_models-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="compare_models-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span> <span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.00</span>, <span class="va">fit.1</span>, hunt.style<span class="op">=</span><span class="st">"wls"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Debiased score test: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y ~ X, with X consists of (Intercept), x1, x2, x3.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (hunt.style = wls, hunt.method = glm)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n = 500, two-way split: hunt = 250, debias &amp; test = 250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> T = 3.2405, p-value = 0.000596674</span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">compare_models</span><span class="op">(</span><span class="va">fit.00</span>, <span class="va">fit.1</span>, hunt.style<span class="op">=</span><span class="st">"wls"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="compare_models-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="compare_models-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit.00</span>, <span class="va">fit.1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis of Deviance Table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: y ~ x2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: y ~ x1 + x2 + x3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Resid. Df Resid. Dev Df Deviance     F    Pr(&gt;F)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       498    1609320                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       496       4503  2  1604817 88385 &lt; 2.2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

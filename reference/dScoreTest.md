@@ -1,13 +1,14 @@
 # Debiased score test: goodness-of-fit test and model comparison
 
-Test whether a parametric (e.g., glm) or a semiparametric (e.g., GAM)
-model is well-specified. The test is a debiased (Neyman-orthogonalized)
-score test computed via sample splitting: on a held-out hunt sample, a
-flexible auxiliary fit is hunted for a direction in which the null
-model's score is non-zero; on a held-out test sample, that direction's
-score is evaluated and standardized under the null. The
-orthogonalization absorbs plug-in bias from estimating the direction, so
-the resulting test statistic is asymptotically standard normal under the
+Test whether a semiparametric (e.g., GAM) or parametric (e.g., glm)
+regression model is well-specified. The test is a debiased
+(Neyman-orthogonalized) score test computed via sample splitting: on a
+held-out hunt sample, the null model is fit and a flexible ML algorithm
+is used to hunt for a direction in which the null model's score seems
+positive; on an independent test sample, that direction's score is
+evaluated to assess the significance. The test employs orthogonalization
+to eliminate plug-in bias from estimating the null model, so the
+resulting test statistic is asymptotically standard normal under the
 null without requiring a parametric form for the alternative.
 
 ## Usage
@@ -164,7 +165,15 @@ dScoreTest(
 
 ## Value
 
-An object of class `"dScoreTest"`.
+An object of class `"dScoreTest"`: a list whose key elements are the
+debiased test statistic `t.stat` and the one-sided p-value `p.val`
+(right tail of the standard normal), along with the test-set score
+residuals, the hunted direction, and the call. It has
+[`print`](https://unbiased.co.in/dScoreTest/reference/print.dScoreTest.md),
+[`summary`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
+and
+[`plot`](https://unbiased.co.in/dScoreTest/reference/plot.dScoreTest.md)
+methods.
 
 ## Details
 
@@ -202,6 +211,14 @@ wrap.
 
 ## See also
 
+Useful links:
+
+- <https://unbiased.co.in/dScoreTest>
+
+- <https://github.com/richardkwo/dScoreTest>
+
+- Report bugs at <https://github.com/richardkwo/dScoreTest/issues>
+
 [`plot.dScoreTest`](https://unbiased.co.in/dScoreTest/reference/plot.dScoreTest.md),
 [`summary.dScoreTest`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md),
 [`hunt_optimal`](https://unbiased.co.in/dScoreTest/reference/hunt_optimal.md),
@@ -212,7 +229,7 @@ wrap.
 ## Author
 
 **Maintainer**: F. Richard Guo <ricguo@umich.edu>
-([ORCID](https://orcid.org/0000-0002-2081-7398))
+([ORCID](https://orcid.org/0000-0002-2081-7398)) \[copyright holder\]
 
 Authors:
 
