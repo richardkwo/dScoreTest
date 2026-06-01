@@ -122,18 +122,24 @@ produced by \code{hunt_fun()}.}
 \code{TRUE}.}
 }
 \value{
-An object of class \code{"dScoreTest"}.
+An object of class \code{"dScoreTest"}: a list whose key elements
+are the debiased test statistic \code{t.stat} and the one-sided p-value
+\code{p.val} (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+\code{\link[=print.dScoreTest]{print}},
+\code{\link[=summary.dScoreTest]{summary}} and
+\code{\link[=plot.dScoreTest]{plot}} methods.
 }
 \description{
-Test whether a parametric (e.g., glm) or a semiparametric (e.g., GAM) model
+Test whether a semiparametric (e.g., GAM) or parametric (e.g., glm) regression model
 is well-specified. The test is a debiased (Neyman-orthogonalized) score test
 computed via sample splitting:
-on a held-out hunt sample, a flexible auxiliary fit is hunted for a
-direction in which the null model's score is non-zero; on a held-out test
-sample, that direction's score is evaluated and standardized under the
-null. The orthogonalization absorbs plug-in bias from estimating the
-direction, so the resulting test statistic is asymptotically standard
-normal under the null without requiring a parametric form for the
+on a held-out hunt sample, the null model is fit and a flexible ML algorithm
+is used to hunt for a direction in which the null model's score seems positive;
+on an independent test sample, that direction's score is evaluated to assess the
+significance. The test employs orthogonalization to eliminate plug-in bias from
+estimating the null model, so the resulting test statistic is asymptotically
+standard normal under the null without requiring a parametric form for the
 alternative.
 }
 \details{
@@ -161,12 +167,20 @@ weight, refit and hunt routines: this is the underlying engine that the
 S3 methods wrap.
 }
 \seealso{
+Useful links:
+\itemize{
+  \item \url{https://unbiased.co.in/dScoreTest}
+  \item \url{https://github.com/richardkwo/dScoreTest}
+  \item Report bugs at \url{https://github.com/richardkwo/dScoreTest/issues}
+}
+
+
 \code{\link{plot.dScoreTest}}, \code{\link{summary.dScoreTest}},
 \code{\link{hunt_optimal}}, \code{\link{hunt_wls}},
 \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
 }
 \author{
-\strong{Maintainer}: F. Richard Guo \email{ricguo@umich.edu} (\href{https://orcid.org/0000-0002-2081-7398}{ORCID})
+\strong{Maintainer}: F. Richard Guo \email{ricguo@umich.edu} (\href{https://orcid.org/0000-0002-2081-7398}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{

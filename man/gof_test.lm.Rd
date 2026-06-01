@@ -11,6 +11,15 @@
 
 \item{...}{Additional arguments passed to \code{\link{gof_test.glm}}.}
 }
+\value{
+An object of class \code{"dScoreTest"}: a list whose key elements
+are the debiased test statistic \code{t.stat} and the one-sided p-value
+\code{p.val} (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+\code{\link[=print.dScoreTest]{print}},
+\code{\link[=summary.dScoreTest]{summary}} and
+\code{\link[=plot.dScoreTest]{plot}} methods.
+}
 \description{
 Debiased score test for goodness of fit of an \code{lm}. Internally
 refits the model as a Gaussian-family GLM and dispatches to

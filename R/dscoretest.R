@@ -76,7 +76,13 @@
 #' @param verbose Default \code{FALSE}; information is printed if set to 
 #'   \code{TRUE}.
 #'
-#' @return An object of class \code{"dScoreTest"}.
+#' @return An object of class \code{"dScoreTest"}: a list whose key elements
+#'   are the debiased test statistic \code{t.stat} and the one-sided p-value
+#'   \code{p.val} (right tail of the standard normal), along with the test-set
+#'   score residuals, the hunted direction, and the call. It has
+#'   \code{\link[=print.dScoreTest]{print}},
+#'   \code{\link[=summary.dScoreTest]{summary}} and
+#'   \code{\link[=plot.dScoreTest]{plot}} methods.
 #'
 #' @seealso \code{\link{plot.dScoreTest}}, \code{\link{summary.dScoreTest}},
 #'   \code{\link{hunt_optimal}}, \code{\link{hunt_wls}}, 
@@ -270,7 +276,6 @@ dScoreTest <- function(y, X,
 #' @seealso \code{\link{dScoreTest}}, \code{\link{hunt_optimal}}, 
 #'   \code{\link{hunt_wls}}, \code{\link{hunt_vanilla}}
 #'
-#' @export
 new_dScoreTest <- function(y, X,
                            idx.hunt, idx.debias, idx.test,
                            score_fun, weight_fun,
@@ -376,6 +381,9 @@ new_dScoreTest <- function(y, X,
 #' @param x A \code{dScoreTest} object.
 #' @param ... Unused, for S3 consistency.
 #'
+#' @return The input \code{x}, invisibly. Called for the side effect of
+#'   printing a summary of the test to the console.
+#'
 #' @export
 print.dScoreTest <- function(x, ...) {
     cat("Debiased score test: \n")
@@ -423,6 +431,9 @@ print.dScoreTest <- function(x, ...) {
 #' @param x A \code{dScoreTest} object.
 #' @param ... Further graphical parameters passed to underlying plotting
 #'   functions.
+#'
+#' @return No return value; called for its side effect of producing the
+#'   diagnostic plots described above.
 #'
 #' @importFrom graphics par hist abline plot points segments legend
 #'
@@ -537,7 +548,6 @@ summary.dScoreTest <- function(object, ...) {
     out
 }
 
-#' @export
 #' @param x A \code{summary.dScoreTest} object.
 #' @rdname summary.dScoreTest
 print.summary.dScoreTest <- function(x, ...) {

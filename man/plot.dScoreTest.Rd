@@ -12,6 +12,10 @@
 \item{...}{Further graphical parameters passed to underlying plotting
 functions.}
 }
+\value{
+No return value; called for its side effect of producing the
+diagnostic plots described above.
+}
 \description{
 Diagonotic plots for the test:
 \enumerate{

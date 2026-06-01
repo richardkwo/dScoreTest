@@ -13,8 +13,43 @@ compare_models(fit.0, ...)
 \item{...}{Additional arguments passed to the dispatched method,
 notably the alternative-model fit \code{fit.1}.}
 }
+\value{
+An object of class \code{"dScoreTest"}: a list whose key elements
+are the debiased test statistic \code{t.stat} and the one-sided p-value
+\code{p.val} (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+\code{\link[=print.dScoreTest]{print}},
+\code{\link[=summary.dScoreTest]{summary}} and
+\code{\link[=plot.dScoreTest]{plot}} methods.
+}
 \description{
 Compare two models using the debiased score test
+}
+\examples{
+ set.seed(42)
+ n <- 500
+ dat <- data.frame(x1 = rnorm(n), x2 = rnorm(n), x3 = rnorm(n))
+ dat$x3 <- dat$x3 + (dat$x1 + dat$x2) / 3
+ dat$y <- 5 * exp(dat$x1 + dat$x3) + rnorm(n) * 3
+ fit.0 <- glm(y ~ x1 + x3, family = gaussian(link = "log"),
+              data = dat, start = rep(1, 3))
+ fit.1 <- glm(y ~ x1 + x2 + x3, family = gaussian(link = "log"),
+              data = dat, start = rep(1, 4))
+              
+ # test fit.0 against fit.1: should not be rejected
+ compare_models(fit.0, fit.1)
+ \donttest{compare_models(fit.0, fit.1, hunt.style="wls")}
+ anova(fit.0, fit.1)
+ 
+ # test a misspecified null model: should be rejected
+ fit.00 <- glm(y ~ x2, family = gaussian(link = "log"),
+              data = dat, start = rep(1, 2))
+ compare_models(fit.00, fit.1)
+ \donttest{plot(compare_models(fit.00, fit.1))}
+ \donttest{compare_models(fit.00, fit.1, hunt.style="wls")}
+ \donttest{plot(compare_models(fit.00, fit.1, hunt.style="wls"))}
+ anova(fit.00, fit.1)
+
 }
 \seealso{
 \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}},

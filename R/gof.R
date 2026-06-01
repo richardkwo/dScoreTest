@@ -4,6 +4,9 @@
 #'   \code{lm} and \code{mgcv::gam} fits.
 #' @param ... Additional arguments passed to the dispatched method.
 #'
+#' @inherit dScoreTest return
+#' @inherit gof_test.glm examples
+#'
 #' @seealso \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}},
 #'   \code{\link{gof_test.gam}},
 #'   \code{\link{compare_models}}, \code{\link{dScoreTest}}
@@ -71,6 +74,8 @@ gof_test.default <- function(object, ...) {
 #' @param verbose Default \code{FALSE}; information is printed if set to
 #'   \code{TRUE}.
 #' @param ... Unused; present for S3 generic/method consistency.
+#'
+#' @inherit dScoreTest return
 #'
 #' @export
 #'
@@ -177,8 +182,10 @@ gof_test.glm <- function(object,
 #' @param object Fitted \code{lm} object.
 #' @param ... Additional arguments passed to \code{\link{gof_test.glm}}.
 #'
+#' @inherit dScoreTest return
+#'
 #' @export
-#' 
+#'
 #' @examples
 #'  set.seed(42)
 #'  n <- 500
@@ -217,6 +224,8 @@ gof_test.lm <- function(object, ...) {
 #' non-numeric predictors are not currently supported. Formulas using
 #' \code{offset()} terms, a \code{weights} argument, or a multi-column
 #' response (e.g. \code{cbind(succ, fail) ~ ...}) are also not supported.
+#'
+#' @inherit dScoreTest return
 #'
 #' @export
 #'

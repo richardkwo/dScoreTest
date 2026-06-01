@@ -5,6 +5,9 @@
 #' @param ... Additional arguments passed to the dispatched method,
 #'   notably the alternative-model fit \code{fit.1}.
 #'
+#' @inherit dScoreTest return
+#' @inherit compare_models.glm examples
+#'
 #' @seealso \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}},
 #'   \code{\link{compare_models.gam}},
 #'   \code{\link{gof_test}}, \code{\link{dScoreTest}}
@@ -51,6 +54,8 @@ compare_models.default <- function(fit.0, ...) {
 #' @param verbose Default \code{FALSE}; information is printed if set to
 #'   \code{TRUE}.
 #' @param ... Unused; present for S3 generic/method consistency.
+#'
+#' @inherit dScoreTest return
 #'
 #' @export
 #'
@@ -171,6 +176,8 @@ compare_models.glm <- function(fit.0, fit.1,
 #'   supermodel of \code{fit.0}; see \code{\link{compare_models.glm}}.
 #' @param ... Additional arguments passed to \code{\link{compare_models.glm}}.
 #'
+#' @inherit dScoreTest return
+#'
 #' @export
 #'
 #' @examples
@@ -225,6 +232,8 @@ compare_models.lm <- function(fit.0, fit.1, ...) {
 #' The test remains meaningful as long as \code{fit.1}'s class contains the
 #' relevant alternative directions. Factor predictors, \code{offset()} terms,
 #' \code{weights} arguments, and multi-column responses are not supported.
+#'
+#' @inherit dScoreTest return
 #'
 #' @export
 #'

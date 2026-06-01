@@ -46,6 +46,15 @@ respectively.}
 
 \item{...}{Unused; present for S3 generic/method consistency.}
 }
+\value{
+An object of class \code{"dScoreTest"}: a list whose key elements
+are the debiased test statistic \code{t.stat} and the one-sided p-value
+\code{p.val} (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+\code{\link[=print.dScoreTest]{print}},
+\code{\link[=summary.dScoreTest]{summary}} and
+\code{\link[=plot.dScoreTest]{plot}} methods.
+}
 \description{
 Debiased score test of the null model \code{fit.0} against the alternative
 \code{fit.1}. GLM \code{fit.1} is used to hunt for signal that \code{fit.0}

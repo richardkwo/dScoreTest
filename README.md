@@ -1,29 +1,36 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dScoreTest <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# dScoreTest <img src="man/figures/logo.png" align="right" height="139"/>
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
 Debiased (Neyman-orthogonalized) score tests for assessing whether a
-parametric or semiparametric regression model is well-specified and for
+semiparametric or parametric regression model is well-specified and for
 comparing nested models.
 
-The test uses sample splitting: on a held-out *hunt* sample, a flexible
-auxiliary fit finds a direction in which the null model’s score is
-non-zero; on an independent *test* sample, the standardized score along
-that direction is evaluated. The orthogonalization absorbs plug-in bias
-from estimating the direction, yielding a test statistic that is
-asymptotically standard normal under the null without requiring a
-parametric form for the alternative. Methods are provided for `glm`,
-`lm`, and `mgcv::gam` fits.
+The test uses a hunt-and-test strategy with sample splitting: on a
+held-out *hunt* sample, it fits the null model and uses machine learning
+to find a direction in which the null model’s score seems positive; on
+an independent *test* sample, it assesses the significance of the score
+in the hunted direction. The test employs orthogonalization to eliminate
+the plug-in bias from estimating the null model, yielding a test
+statistic that is asymptotically standard normal under the null without
+requiring a parametric form for the alternative. Methods are provided
+for `glm`, `lm`, and `mgcv::gam` fits.
 
 ## Installation
 
-Install the development version from
-[GitHub](https://github.com/richardkwo/dScoreTest) with:
+You can install the package from CRAN with
+
+``` r
+install.packages("dScoreTest")
+```
+
+or the development version from
+[GitHub](https://github.com/richardkwo/dScoreTest) with
 
 ``` r
 # install.packages("remotes")

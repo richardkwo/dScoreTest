@@ -11,6 +11,10 @@
 
 \item{...}{Unused, for S3 consistency.}
 }
+\value{
+The input \code{x}, invisibly. Called for the side effect of
+printing a summary of the test to the console.
+}
 \description{
 Print the score test
 }

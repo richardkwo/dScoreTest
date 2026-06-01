@@ -12,8 +12,31 @@ gof_test(object, ...)
 
 \item{...}{Additional arguments passed to the dispatched method.}
 }
+\value{
+An object of class \code{"dScoreTest"}: a list whose key elements
+are the debiased test statistic \code{t.stat} and the one-sided p-value
+\code{p.val} (right tail of the standard normal), along with the test-set
+score residuals, the hunted direction, and the call. It has
+\code{\link[=print.dScoreTest]{print}},
+\code{\link[=summary.dScoreTest]{summary}} and
+\code{\link[=plot.dScoreTest]{plot}} methods.
+}
 \description{
 Debiased score test for goodness of fit
+}
+\examples{
+ set.seed(42)
+ n <- 500
+ X <- matrix(rnorm(n * 3), nrow = n)
+ # log(E[y]) ~ X well-specified
+ y0 <- 5 * exp(X[,1] + X[,3]) + rnorm(n) * 3
+ fit.0 <- glm(y0 ~ X, family = gaussian(link = "log"), start=rep(1,4))
+ gof_test(fit.0)
+ # log(E[y]) ~ X misspecified
+ y1 <- y0 + exp(6 * cos(X[,1]/6)^2) / sqrt(n)
+ fit.1 <- glm(y1 ~ X, family = gaussian(link = "log"), start=rep(1,4))
+ gof_test(fit.1)
+
 }
 \seealso{
 \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}},

@@ -1,14 +1,14 @@
 #' Debiased score test: goodness-of-fit test and model comparison
 #'
-#' Test whether a parametric (e.g., glm) or a semiparametric (e.g., GAM) model 
+#' Test whether a semiparametric (e.g., GAM) or parametric (e.g., glm) regression model 
 #' is well-specified. The test is a debiased (Neyman-orthogonalized) score test 
 #' computed via sample splitting:
-#' on a held-out hunt sample, a flexible auxiliary fit is hunted for a
-#' direction in which the null model's score is non-zero; on a held-out test
-#' sample, that direction's score is evaluated and standardized under the
-#' null. The orthogonalization absorbs plug-in bias from estimating the
-#' direction, so the resulting test statistic is asymptotically standard
-#' normal under the null without requiring a parametric form for the
+#' on a held-out hunt sample, the null model is fit and a flexible ML algorithm 
+#' is used to hunt for a direction in which the null model's score seems positive; 
+#' on an independent test sample, that direction's score is evaluated to assess the 
+#' significance. The test employs orthogonalization to eliminate plug-in bias from 
+#' estimating the null model, so the resulting test statistic is asymptotically 
+#' standard normal under the null without requiring a parametric form for the
 #' alternative.
 #' 
 #' For most scenarios, use one of these methods instead:
