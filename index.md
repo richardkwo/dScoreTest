@@ -4,14 +4,15 @@ Debiased (Neyman-orthogonalized) score tests for assessing whether a
 semiparametric or parametric regression model is well-specified and for
 comparing nested models.
 
-The test uses sample splitting: on a held-out *hunt* sample, it fits the
-null model and uses machine learning to find a direction in which the
-null model’s score seems positive; on an independent *test* sample, it
-assesses the significance of the score in the hunted direction. The test
-employs orthogonalization to eliminate the plug-in bias from estimating
-the null model, yielding a test statistic that is asymptotically
-standard normal under the null without requiring a parametric form for
-the alternative. Methods are provided for `glm`, `lm`, and
+The test uses a hunt-and-test strategy with sample splitting: on a
+held-out *hunt* sample, it fits the null model and uses machine learning
+to find a direction in which the null model’s score seems positive; on
+an independent *test* sample, it assesses the significance of the score
+in the hunted direction. The test employs orthogonalization to eliminate
+the plug-in bias from estimating the null model, yielding a test
+statistic that is asymptotically standard normal under the null without
+requiring a parametric form for the alternative. Methods are provided
+for `glm`, `lm`, and
 [`mgcv::gam`](https://rdrr.io/pkg/mgcv/man/gam.html) fits.
 
 ## Installation

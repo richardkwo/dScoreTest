@@ -407,7 +407,7 @@ between splits (cf. the harmonic-mean p-value of Wilson, 2019):</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">pvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span><span class="op">$</span><span class="va">p.val</span><span class="op">)</span></span>
 <span><span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">pvals</span><span class="op">)</span>   <span class="co"># harmonic-mean p-value</span></span>
-<span><span class="co">#&gt; [1] 0.01681</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.01681002</span></span></code></pre></div>
 <p>The aggregated p-value seems to agree with the mgcv’s result.</p>
 </div>
 </div>

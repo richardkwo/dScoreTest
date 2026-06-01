@@ -386,7 +386,7 @@ splits (cf. the harmonic-mean p-value of Wilson, 2019):
 set.seed(42)
 pvals <- replicate(200, compare_models(fit.0, fit.1)$p.val)
 1 / mean(1 / pvals)   # harmonic-mean p-value
-#> [1] 0.01681
+#> [1] 0.01681002
 ```
 
 The aggregated p-value seems to agree with the mgcv’s result.
