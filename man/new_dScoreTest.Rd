@@ -16,17 +16,19 @@ new_dScoreTest(
   wls_method,
   hunt.style = "optimal",
   hunt.method = "customized",
-  fit_alt_method = NULL,
-  wls_alt_method = NULL,
+  debias.method = "standard",
+  debias_fun = debias_standard,
+  fit_hunt_method = NULL,
+  wls_hunt_method = NULL,
   X.cols.hunt = 1:ncol(X),
   binary.y = FALSE,
   trim.outlier.hunt = TRUE,
   predict_fun = stats::predict,
-  predict_fun_alt = stats::predict,
+  predict_fun_hunt = stats::predict,
   arg.fit_method = NULL,
   arg.wls_method = NULL,
-  arg.fit_alt_method = NULL,
-  arg.wls_alt_method = NULL
+  arg.fit_hunt_method = NULL,
+  arg.wls_hunt_method = NULL
 )
 }
 \arguments{
@@ -63,15 +65,22 @@ must support \code{predict_fun(fit, X)}.}
 
 \item{hunt.method}{String for the hunting method.}
 
-\item{fit_alt_method}{Required when \code{hunt.style = "vanilla"};
-ignored otherwise. Function with signature
-\code{fit_alt_method(y, X, ...)} returning a fitted alternative model
-that supports \code{predict_fun_alt(g, X)}.}
+\item{debias.method}{String for the debiasing method, recorded in the
+returned object's \code{Call}.}
 
-\item{wls_alt_method}{Required when \code{hunt.style \%in\% c("optimal", "wls")};
+\item{debias_fun}{Function performing the debiasing, with the same signature
+as \code{\link{debias_standard}} (the default). Must return a list with an
+element \code{h}, the debiased hunted function.}
+
+\item{fit_hunt_method}{Required when \code{hunt.style = "vanilla"};
 ignored otherwise. Function with signature
-\code{wls_alt_method(y, X, w, ...)} returning a fitted alternative model
-that supports \code{predict_fun_alt(g, X)}.}
+\code{fit_hunt_method(y, X, ...)} returning a fitted alternative model
+that supports \code{predict_fun_hunt(g, X)}.}
+
+\item{wls_hunt_method}{Required when \code{hunt.style \%in\% c("optimal", "wls")};
+ignored otherwise. Function with signature
+\code{wls_hunt_method(y, X, w, ...)} returning a fitted alternative model
+that supports \code{predict_fun_hunt(g, X)}.}
 
 \item{X.cols.hunt}{Integer or name vector selecting which columns of
 \code{X} drive the hunt. Default: all columns.}
@@ -86,12 +95,12 @@ routine as \code{trim.outlier}. If \code{TRUE} (default), extreme values
 in the hunted function will be removed using Tukey's IQR rule.}
 
 \item{predict_fun}{Function with signature \code{predict_fun(fit, X)}
-returning predictions from null-model fits. Default \code{stats::predict}.}
+returning predictions from a fitted null model. Default \code{stats::predict}.}
 
-\item{predict_fun_alt}{Function with signature \code{predict_fun_alt(fit, X)}
-returning predictions from alt-model fits. Default \code{stats::predict}.}
+\item{predict_fun_hunt}{Function with signature \code{predict_fun_hunt(fit, X)}
+returning predictions from a model fitted under alternative. Default \code{stats::predict}.}
 
-\item{arg.fit_method, arg.wls_method, arg.fit_alt_method, arg.wls_alt_method}{Named lists of additional arguments forwarded to the corresponding
+\item{arg.fit_method, arg.wls_method, arg.fit_hunt_method, arg.wls_hunt_method}{Named lists of additional arguments forwarded to the corresponding
 fitter via \code{do.call}. Default \code{NULL}.}
 }
 \value{
@@ -104,12 +113,13 @@ normal).}
 \item{\code{resids}}{Score residuals on the test subsample.}
 \item{\code{h}}{Orthogonalised hunted direction on the test subsample.}
 \item{\code{h.raw}}{Hunted direction before the outer debias projection.}
-\item{\code{hunted_fun}}{The hunted function that can be applied to X.}
+\item{\code{hunted_fun}}{The debiased hunted function
+\eqn{\hat{h} - \hat{m}_{\hat{h}}}, a function that can be applied to X.}
 \item{\code{Data}}{List with \code{X}, \code{y}, and the three index
 vectors.}
 \item{\code{Call}}{Named list of methods,
-\code{hunt.style}, \code{hunt.method}, both predict functions,
-and the four \code{arg.*} lists.}
+\code{hunt.style}, \code{hunt.method}, \code{debias.method}, both
+predict functions, and the four \code{arg.*} lists.}
 }
 }
 \description{

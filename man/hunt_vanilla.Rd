@@ -5,19 +5,19 @@
 \title{Vanilla hunting}
 \usage{
 hunt_vanilla(
-  fit_alt_method,
+  fit_hunt_method,
   resids,
   X,
   X.cols = 1:ncol(X),
   trim.outlier = TRUE,
-  arg.fit_alt_method = NULL,
-  predict_fun_alt = stats::predict
+  arg.fit_hunt_method = NULL,
+  predict_fun_hunt = stats::predict
 )
 }
 \arguments{
-\item{fit_alt_method}{Function with signature \code{fit_alt_method(y, X, ...)}
+\item{fit_hunt_method}{Function with signature \code{fit_hunt_method(y, X, ...)}
 that returns a fitted \emph{alternative model} \eqn{\hat{g} \in \mathcal{G}}.
-For a fitted \code{g}, it must support \code{predict_fun_alt(g, X)} for
+For a fitted \code{g}, it must support \code{predict_fun_hunt(g, X)} for
 evaluation.}
 
 \item{resids}{Residuals (i.e., negative scores) of length n from the null model.}
@@ -29,16 +29,28 @@ evaluation.}
 \item{trim.outlier}{If \code{TRUE}, outliers in \eqn{\hat{h}(X)} will be
 trimmed from the hunted \eqn{\hat{h}} using Tukey's IQR rule.}
 
-\item{arg.fit_alt_method}{Named list of additional arguments passed to
-\code{fit_alt_method} (default to \code{NULL}).}
+\item{arg.fit_hunt_method}{Named list of additional arguments passed to
+\code{fit_hunt_method} (default to \code{NULL}).}
 
-\item{predict_fun_alt}{Function with signature \code{predict_fun_alt(fit, X)}
+\item{predict_fun_hunt}{Function with signature \code{predict_fun_hunt(fit, X)}
 returning a numeric vector of predictions from the alternative-model fit.
 Default \code{stats::predict}.}
 }
 \value{
-A function h of signature \code{h(X)}.
+An object of class \code{"hunt"}, a list with elements:
+\describe{
+\item{\code{hunt.fit}}{The fitted hunt model produced by
+\code{fit_hunt_method}.}
+\item{\code{trim.bounds}}{The Tukey IQR trimming bounds, or
+\code{c(-Inf, Inf)} when \code{trim.outlier = FALSE}.}
+\item{\code{predict_fun_hunt}}{The prediction function for
+\code{hunt.fit}, as supplied.}
+\item{\code{X.cols}}{The columns of \code{X} used for the hunt, as
+supplied.}
+\item{\code{h}}{A function with signature \code{h(X)} giving the hunted
+signal.}
+}
 }
 \description{
-Returns the hunted signal h as a function
+Hunt by fitting residuals on X.
 }

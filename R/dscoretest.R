@@ -30,7 +30,7 @@
 #'   \item \code{'grf'}: regression forest from package \code{grf}.
 #'   }
 #'   When this is set to any other value, arguments \code{hunt_fun} and 
-#'   \code{predict_fun_alt} must be set properly to supply a customized 
+#'   \code{predict_fun_hunt} must be set properly to supply a customized 
 #'   hunting method. 
 #' @param hunt_fun Default \code{NULL}. 
 #'   When \code{hunt.method} is not set to a built-in method, 
@@ -42,9 +42,19 @@
 #'   otherwise, for \code{'vanilla'} hunting,
 #'   this function must have signature \code{hunt_fun(y, X, ...)} that 
 #'   returns an \emph{alternative model} fitted in any fashion. 
-#'   The returned object \code{g} must support \code{predict_fun_alt(g, X)} 
+#'   The returned object \code{g} must support \code{predict_fun_hunt(g, X)}
 #'   for evaluation.
-#' @param trim.outlier.hunt If \code{TRUE} (default), 
+#' @param debias.method Debiasing method. Currently available:
+#'   \itemize{
+#'   \item \code{'standard'}: standard debiasing (default). See
+#'      \code{\link{debias_standard}}.
+#'   }
+#'   When set to any other value, \code{debias_fun} must be supplied.
+#' @param debias_fun Default \code{NULL}. When \code{debias.method} is not
+#'   \code{'standard'}, this is a customized debiasing function with the same
+#'   signature as \code{\link{debias_standard}}, returning a list with an
+#'   element \code{h}, the debiased hunted function.
+#' @param trim.outlier.hunt If \code{TRUE} (default),
 #' extreme values produced by the hunted function will be trimmed using Tukey's 
 #' IQR rule. 
 #' @param X.cols.hunt Integer vector selecting which columns of
@@ -68,9 +78,9 @@
 #'   \eqn{\hat{f}(X)}. Default \code{stats::predict}. 
 #'   When y is binary, it must also support signature 
 #'   \code{predict_fun(fit, X, type='response')} for returning probabilities.
-#' @param predict_fun_alt Default \code{NULL}. 
+#' @param predict_fun_hunt Default \code{NULL}. 
 #'   When \code{hunt.method} is not set to a built-in method, this is a function
-#'   with signature \code{predict_fun_alt(fit, X)} 
+#'   with signature \code{predict_fun_hunt(fit, X)} 
 #'   returning a numeric vector of predictions from a fitted alternative model 
 #'   produced by \code{hunt_fun()}. 
 #' @param verbose Default \code{FALSE}; information is printed if set to 
@@ -93,12 +103,13 @@ dScoreTest <- function(y, X,
                        fit_method, wls_method,
                        hunt.style = "optimal",
                        hunt.method = "grf", hunt_fun = NULL,
+                       debias.method = "standard", debias_fun = NULL,
                        trim.outlier.hunt=TRUE,
                        X.cols.hunt=1:ncol(X),
                        splits=c(0.5, 0.5),
                        arg.fit_method=NULL, arg.wls_method=NULL, arg.hunt_fun=NULL,
                        predict_fun=stats::predict,
-                       predict_fun_alt=NULL, 
+                       predict_fun_hunt=NULL, 
                        verbose=FALSE) {
     # check input
     stopifnot(
@@ -116,21 +127,35 @@ dScoreTest <- function(y, X,
         if (verbose) {
             message("Using grf::regression_forest() for hunting.")
         }
-        predict_fun_alt <- predict_fun_alt_grf
+        predict_fun_hunt <- predict_fun_hunt_grf
         if (hunt.style=="vanilla") {
-            hunt_fun <- fit_alt_method_grf
-            arg.hunt_fun <- arg.fit_alt_method_grf
+            hunt_fun <- fit_hunt_method_grf
+            arg.hunt_fun <- arg.fit_hunt_method_grf
         } else {
-            hunt_fun <- wls_alt_method_grf
-            arg.hunt_fun <- arg.wls_alt_method_grf
+            hunt_fun <- wls_hunt_method_grf
+            arg.hunt_fun <- arg.wls_hunt_method_grf
         }
     } else {
         if (verbose) {
-            message("Hunting using the supplied hunt_fun().")
+            message(sprintf("hunt.method = %s: Hunting using the supplied hunt_fun().", 
+                            hunt.method))
         }
         stopifnot(
             "hunt_fun is not a function" = is.function(hunt_fun),
-            "predict_fun_alt is not a function" = is.function(predict_fun_alt)
+            "predict_fun_hunt is not a function" = is.function(predict_fun_hunt)
+        )
+    }
+    # resolve debiasing
+    if (debias.method == "standard") {
+        debias_fun <- debias_standard
+    } else {
+        if (verbose) {
+            message(sprintf("debias.method = %s: debiasing using the supplied debias_fun().",
+                            debias.method))
+        }
+        stopifnot(
+            "debias_fun must be a function for a customized debias.method" =
+                is.function(debias_fun)
         )
     }
     # run constructor
@@ -156,15 +181,16 @@ dScoreTest <- function(y, X,
                          fit_method, wls_method,
                          hunt.style = "optimal",
                          hunt.method = hunt.method,
-                         fit_alt_method=NULL, wls_alt_method=hunt_fun,
+                         debias.method = debias.method, debias_fun = debias_fun,
+                         fit_hunt_method=NULL, wls_hunt_method=hunt_fun,
                          X.cols.hunt=X.cols.hunt, binary.y=binary.y,
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
-                         predict_fun_alt=predict_fun_alt,
+                         predict_fun_hunt=predict_fun_hunt,
                          arg.fit_method=arg.fit_method,
                          arg.wls_method=arg.wls_method,
-                         arg.fit_alt_method=NULL, 
-                         arg.wls_alt_method=arg.hunt_fun)
+                         arg.fit_hunt_method=NULL, 
+                         arg.wls_hunt_method=arg.hunt_fun)
     } else if (hunt.style=="wls") {
         score.test <- new_dScoreTest(y, X,
                          idx.hunt, idx.debias, idx.test,
@@ -172,15 +198,16 @@ dScoreTest <- function(y, X,
                          fit_method, wls_method,
                          hunt.style = "wls",
                          hunt.method = hunt.method,
-                         fit_alt_method=NULL, wls_alt_method=hunt_fun,
+                         debias.method = debias.method, debias_fun = debias_fun,
+                         fit_hunt_method=NULL, wls_hunt_method=hunt_fun,
                          X.cols.hunt=X.cols.hunt, 
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
-                         predict_fun_alt=predict_fun_alt,
+                         predict_fun_hunt=predict_fun_hunt,
                          arg.fit_method=arg.fit_method,
                          arg.wls_method=arg.wls_method,
-                         arg.fit_alt_method=NULL, 
-                         arg.wls_alt_method=arg.hunt_fun)
+                         arg.fit_hunt_method=NULL, 
+                         arg.wls_hunt_method=arg.hunt_fun)
     } else if (hunt.style=="vanilla") {
         score.test <- new_dScoreTest(y, X,
                          idx.hunt, idx.debias, idx.test,
@@ -188,15 +215,16 @@ dScoreTest <- function(y, X,
                          fit_method, wls_method,
                          hunt.style = "vanilla",
                          hunt.method = hunt.method,
-                         fit_alt_method=hunt_fun, wls_alt_method=NULL,
+                         debias.method = debias.method, debias_fun = debias_fun,
+                         fit_hunt_method=hunt_fun, wls_hunt_method=NULL,
                          X.cols.hunt=X.cols.hunt, 
                          trim.outlier.hunt=trim.outlier.hunt,
                          predict_fun=predict_fun,
-                         predict_fun_alt=predict_fun_alt,
+                         predict_fun_hunt=predict_fun_hunt,
                          arg.fit_method=arg.fit_method,
                          arg.wls_method=arg.wls_method,
-                         arg.fit_alt_method=arg.hunt_fun, 
-                         arg.wls_alt_method=NULL)
+                         arg.fit_hunt_method=arg.hunt_fun, 
+                         arg.wls_hunt_method=NULL)
     }
     return(score.test)
 }
@@ -231,14 +259,19 @@ dScoreTest <- function(y, X,
 #' @param hunt.style One of \code{"optimal"} (default), \code{"wls"}, or
 #'   \code{"vanilla"}. Selects which \code{hunt_*} routine is used.
 #' @param hunt.method String for the hunting method.
-#' @param fit_alt_method Required when \code{hunt.style = "vanilla"};
+#' @param debias.method String for the debiasing method, recorded in the
+#'   returned object's \code{Call}.
+#' @param debias_fun Function performing the debiasing, with the same signature
+#'   as \code{\link{debias_standard}} (the default). Must return a list with an
+#'   element \code{h}, the debiased hunted function.
+#' @param fit_hunt_method Required when \code{hunt.style = "vanilla"};
 #'   ignored otherwise. Function with signature
-#'   \code{fit_alt_method(y, X, ...)} returning a fitted alternative model
-#'   that supports \code{predict_fun_alt(g, X)}.
-#' @param wls_alt_method Required when \code{hunt.style \%in\% c("optimal", "wls")};
+#'   \code{fit_hunt_method(y, X, ...)} returning a fitted alternative model
+#'   that supports \code{predict_fun_hunt(g, X)}.
+#' @param wls_hunt_method Required when \code{hunt.style \%in\% c("optimal", "wls")};
 #'   ignored otherwise. Function with signature
-#'   \code{wls_alt_method(y, X, w, ...)} returning a fitted alternative model
-#'   that supports \code{predict_fun_alt(g, X)}.
+#'   \code{wls_hunt_method(y, X, w, ...)} returning a fitted alternative model
+#'   that supports \code{predict_fun_hunt(g, X)}.
 #' @param X.cols.hunt Integer or name vector selecting which columns of
 #'   \code{X} drive the hunt. Default: all columns.
 #' @param binary.y Logical. When \code{TRUE}, the optimal hunter computes
@@ -249,10 +282,10 @@ dScoreTest <- function(y, X,
 #'   routine as \code{trim.outlier}. If \code{TRUE} (default), extreme values 
 #'   in the hunted function will be removed using Tukey's IQR rule. 
 #' @param predict_fun Function with signature \code{predict_fun(fit, X)}
-#'   returning predictions from null-model fits. Default \code{stats::predict}.
-#' @param predict_fun_alt Function with signature \code{predict_fun_alt(fit, X)}
-#'   returning predictions from alt-model fits. Default \code{stats::predict}.
-#' @param arg.fit_method,arg.wls_method,arg.fit_alt_method,arg.wls_alt_method
+#'   returning predictions from a fitted null model. Default \code{stats::predict}.
+#' @param predict_fun_hunt Function with signature \code{predict_fun_hunt(fit, X)}
+#'   returning predictions from a model fitted under alternative. Default \code{stats::predict}.
+#' @param arg.fit_method,arg.wls_method,arg.fit_hunt_method,arg.wls_hunt_method
 #'   Named lists of additional arguments forwarded to the corresponding
 #'   fitter via \code{do.call}. Default \code{NULL}.
 #'
@@ -265,12 +298,13 @@ dScoreTest <- function(y, X,
 #'     \item{\code{resids}}{Score residuals on the test subsample.}
 #'     \item{\code{h}}{Orthogonalised hunted direction on the test subsample.}
 #'     \item{\code{h.raw}}{Hunted direction before the outer debias projection.}
-#'     \item{\code{hunted_fun}}{The hunted function that can be applied to X.}      
+#'     \item{\code{hunted_fun}}{The debiased hunted function
+#'       \eqn{\hat{h} - \hat{m}_{\hat{h}}}, a function that can be applied to X.}
 #'     \item{\code{Data}}{List with \code{X}, \code{y}, and the three index
 #'       vectors.}
 #'     \item{\code{Call}}{Named list of methods,
-#'       \code{hunt.style}, \code{hunt.method}, both predict functions, 
-#'       and the four \code{arg.*} lists.}
+#'       \code{hunt.style}, \code{hunt.method}, \code{debias.method}, both
+#'       predict functions, and the four \code{arg.*} lists.}
 #'   }
 #'
 #' @seealso \code{\link{dScoreTest}}, \code{\link{hunt_optimal}}, 
@@ -282,13 +316,14 @@ new_dScoreTest <- function(y, X,
                            fit_method, wls_method,
                            hunt.style = "optimal",
                            hunt.method = "customized",
-                           fit_alt_method=NULL, wls_alt_method=NULL,
+                           debias.method = "standard", debias_fun = debias_standard,
+                           fit_hunt_method=NULL, wls_hunt_method=NULL,
                            X.cols.hunt=1:ncol(X), binary.y=FALSE,
                            trim.outlier.hunt = TRUE,
                            predict_fun = stats::predict, 
-                           predict_fun_alt = stats::predict,
+                           predict_fun_hunt = stats::predict,
                            arg.fit_method = NULL, arg.wls_method=NULL,
-                           arg.fit_alt_method = NULL, arg.wls_alt_method=NULL) {
+                           arg.fit_hunt_method = NULL, arg.wls_hunt_method=NULL) {
     
     # (fit and) hunt with data in idx.hunt
     fit.hunt <- do.call(fit_method, 
@@ -296,47 +331,49 @@ new_dScoreTest <- function(y, X,
                           arg.fit_method))
     stopifnot(hunt.style %in% c("optimal", "wls", "vanilla"))
     if (hunt.style == "optimal") {
-        stopifnot(is.function(wls_alt_method))
-        h_hat <- hunt_optimal(wls_alt_method, wls_method, score_fun, weight_fun,
+        stopifnot(is.function(wls_hunt_method))
+        h.hat <- hunt_optimal(wls_hunt_method, wls_method, score_fun, weight_fun,
             fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE],
             X.cols = X.cols.hunt,
             binary.y = binary.y,
             trim.outlier = trim.outlier.hunt,
-            arg.wls_alt_method = arg.wls_alt_method,
+            arg.wls_hunt_method = arg.wls_hunt_method,
             arg.wls_method = arg.wls_method,
             predict_fun = predict_fun,
-            predict_fun_alt = predict_fun_alt)
+            predict_fun_hunt = predict_fun_hunt)
     } else if (hunt.style == "wls") {
-        stopifnot(is.function(wls_alt_method))
+        stopifnot(is.function(wls_hunt_method))
         # resids is (-score)
         resids.hunt <- -1 * score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
-        h_hat <- hunt_wls(wls_alt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
+        h.hat <- hunt_wls(wls_hunt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
                           X.cols = X.cols.hunt,
                           trim.outlier = trim.outlier.hunt,
-                          arg.wls_alt_method = arg.wls_alt_method,
-                          predict_fun_alt = predict_fun_alt)
+                          arg.wls_hunt_method = arg.wls_hunt_method,
+                          predict_fun_hunt = predict_fun_hunt)
     } else if (hunt.style == "vanilla") {
-        stopifnot(is.function(fit_alt_method))
+        stopifnot(is.function(fit_hunt_method))
         # resids is (-score)
         resids.hunt <- -1 * score_fun(fit.hunt, y[idx.hunt], X[idx.hunt,,drop=FALSE])
-        h_hat <- hunt_vanilla(fit_alt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
+        h.hat <- hunt_vanilla(fit_hunt_method, resids.hunt, X[idx.hunt,,drop=FALSE],
                           X.cols = X.cols.hunt,
                           trim.outlier = trim.outlier.hunt,
-                          arg.fit_alt_method = arg.fit_alt_method,
-                          predict_fun_alt = predict_fun_alt)
+                          arg.fit_hunt_method = arg.fit_hunt_method,
+                          predict_fun_hunt = predict_fun_hunt)
     }
-    # (refit and) debias h_hat
-    fit.debias <- do.call(fit_method, 
-                          c(list(y[idx.debias], X[idx.debias,,drop=FALSE]), 
+    # refit the null model on the debiasing sample and debias h.hat
+    fit.debias <- do.call(fit_method,
+                          c(list(y[idx.debias], X[idx.debias,,drop=FALSE]),
                             arg.fit_method))
-    w.debias <- weight_fun(fit.debias, X[idx.debias,,drop=FALSE])
-    m.h.fit <- do.call(wls_method,
-                          c(list(h_hat(X[idx.debias,,drop=FALSE]),
-                                 X[idx.debias,,drop=FALSE],
-                                 w.debias), arg.wls_method))
-    # evaluate the test 
-    h.test.raw <- h_hat(X[idx.test,,drop=FALSE])
-    h.test <-  h.test.raw - predict_fun(m.h.fit, X[idx.test,,drop=FALSE])
+    debias.out <- debias_fun(h.hat = h.hat,
+                             X.debias = X[idx.debias,,drop=FALSE],
+                             fit.debias = fit.debias,
+                             predict_fun = predict_fun,
+                             weight_fun = weight_fun,
+                             wls_method = wls_method,
+                             arg.wls_method = arg.wls_method)
+    # evaluate the test
+    h.test.raw <- h.hat$h(X[idx.test,,drop=FALSE])
+    h.test <-  debias.out$h(X[idx.test,,drop=FALSE])
     resids.test <- -1 * score_fun(fit.debias, y[idx.test], X[idx.test,,drop=FALSE])
     
     L.test <- resids.test * h.test
@@ -355,24 +392,70 @@ new_dScoreTest <- function(y, X,
     out <- list(t.stat=t.stat, p.val=p.val,
                 resids=resids.test, h=h.test, h.raw=h.test.raw, 
                 L=L.test, L.raw=L.test.raw, 
-                hunted_fun=h_hat)
+                hunted_fun=debias.out$h)
     out$Data <- list(X=X, y=y,
                      idx.hunt=idx.hunt, idx.debias=idx.debias, idx.test=idx.test)
     out$Call <- list(score_fun = score_fun, weight_fun = weight_fun,
                         fit_method = fit_method, wls_method = wls_method,
                         hunt.style = hunt.style,
-                        hunt.method = hunt.method, 
-                        fit_alt_method = fit_alt_method,
-                        wls_alt_method = wls_alt_method,
+                        hunt.method = hunt.method,
+                        debias.method = debias.method,
+                        fit_hunt_method = fit_hunt_method,
+                        wls_hunt_method = wls_hunt_method,
                         X.cols.hunt = X.cols.hunt,
                         predict_fun = predict_fun,
-                        predict_fun_alt = predict_fun_alt,
+                        predict_fun_hunt = predict_fun_hunt,
                         arg.fit_method = arg.fit_method,
                         arg.wls_method = arg.wls_method,
-                        arg.fit_alt_method = arg.fit_alt_method,
-                        arg.wls_alt_method = arg.wls_alt_method)
+                        arg.fit_hunt_method = arg.fit_hunt_method,
+                        arg.wls_hunt_method = arg.wls_hunt_method)
     class(out) <- "dScoreTest"
     return(out)
+}
+
+# standard debiasing ------
+#' Standard debiasing
+#'
+#' Transform a hunted function \eqn{\hat{h}} into a debiased function
+#' \eqn{\hat{h} - \hat{m}_{\hat{h}}}, where \eqn{\hat{m}_{\hat{h}}} is the
+#' projection of \eqn{\hat{h}} onto the null model.
+#'
+#' @details
+#' The projection \eqn{\hat{m}_{\hat{h}}} is obtained by fitting the null model
+#' (via \code{wls_method}, weighted by \code{weight_fun(fit.debias, X.debias)})
+#' with the hunted values \code{h.hat$h(X.debias)} as response. This projection
+#' uses \strong{all} columns of \code{X}, even when the hunt itself is driven by
+#' only a subset of covariates (\code{h.hat$X.cols}).
+#'
+#' @param h.hat A list as returned by one of [hunt_optimal()], [hunt_wls()], [hunt_vanilla()].
+#' @param X.debias Part of X for debiasing.
+#' @param fit.debias Null model fitted on the debiasing sample of X and y.
+#' @param predict_fun,weight_fun,wls_method,arg.wls_method They must be compatible with
+#'      \code{fit.debias}; see [dScoreTest()] for details.
+#'
+#' @return A list with elements:
+#'   \describe{
+#'     \item{\code{m.h.fit}}{The null model fitted (over all columns of \code{X})
+#'     to project and debias \eqn{\hat{h}}.}
+#'     \item{\code{h}}{The debiased hunt function \eqn{\hat{h} - \hat{m}_{\hat{h}}}
+#'     with signature \code{h(X)}.}
+#'   }
+#' @export
+debias_standard <- function(h.hat, X.debias, fit.debias,
+                            predict_fun, weight_fun, wls_method, arg.wls_method) {
+    w.debias <- weight_fun(fit.debias, X.debias)
+    stopifnot("Weights must be non-negative" = all(w.debias >= 0))
+    # Project the hunted function onto the null model over ALL columns of X
+    # (the null model is defined over the full covariate matrix, even when the
+    # hunt is driven by only a subset h.hat$X.cols).
+    m.h.fit <- do.call(wls_method,
+                       c(list(h.hat$h(X.debias), X.debias, w.debias),
+                         arg.wls_method))
+    # debiased hunt function
+    h <- function(.X) {
+        h.hat$h(.X) - predict_fun(m.h.fit, .X)
+    }
+    return(list(m.h.fit = m.h.fit, h = h))
 }
 
 # generics for the class -------
@@ -389,8 +472,8 @@ print.dScoreTest <- function(x, ...) {
     cat("Debiased score test: \n")
     cat(sprintf("y ~ X, with X consists of %s.\n", 
                 paste(colnames(x$Data$X)[x$Call$X.cols.hunt], collapse=", ")))
-    cat(sprintf("(hunt.style = %s, hunt.method = %s)\n", 
-                x$Call$hunt.style, x$Call$hunt.method))
+    cat(sprintf("(hunt.style = %s, hunt.method = %s, debias.method = %s)\n",
+                x$Call$hunt.style, x$Call$hunt.method, x$Call$debias.method))
     if (setequal(x$Data$idx.debias, x$Data$idx.test)) {
         cat(sprintf("n = %d, two-way split: hunt = %d, debias & test = %d\n\n",
                     length(x$Data$y),

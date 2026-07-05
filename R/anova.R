@@ -147,7 +147,7 @@ compare_models.glm <- function(fit.0, fit.1,
                    weights = w,
                    data = as.data.frame(cbind(y, X)))
     }
-    predict_fun_alt <- function(fit, X, ...) {
+    predict_fun_hunt <- function(fit, X, ...) {
         stats::predict(fit, newdata = as.data.frame(X), ...)
     }
 
@@ -161,7 +161,7 @@ compare_models.glm <- function(fit.0, fit.1,
                X.cols.hunt = 1:ncol(X.1),
                splits = splits,
                predict_fun = predict_fun,
-               predict_fun_alt = predict_fun_alt,
+               predict_fun_hunt = predict_fun_hunt,
                verbose = verbose)
 }
 
@@ -353,7 +353,7 @@ compare_models.gam <- function(fit.0, fit.1,
         mgcv::gam(fm, family = stats::gaussian(),
                   weights = w, data = data)
     }
-    predict_fun_alt <- function(fit, X, ...) {
+    predict_fun_hunt <- function(fit, X, ...) {
         as.numeric(mgcv::predict.gam(fit, newdata = as.data.frame(X), ...))
     }
 
@@ -366,6 +366,6 @@ compare_models.gam <- function(fit.0, fit.1,
                X.cols.hunt = 1:ncol(X),
                splits = splits,
                predict_fun = predict_fun,
-               predict_fun_alt = predict_fun_alt,
+               predict_fun_hunt = predict_fun_hunt,
                verbose = verbose)
 }

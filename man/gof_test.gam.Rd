@@ -13,7 +13,7 @@
   X.cols.exclude = NULL,
   splits = c(0.5, 0.5),
   arg.hunt_fun = NULL,
-  predict_fun_alt = NULL,
+  predict_fun_hunt = NULL,
   verbose = FALSE,
   ...
 )
@@ -36,7 +36,7 @@ least squares.  See \code{\link{hunt_vanilla}}.}}
 \item \code{'grf'}: regression forest from package \code{grf}.
 }
 When this is set to any other value, arguments \code{hunt_fun},
-\code{arg.hunt_fun} and \code{predict_fun_alt} are used to specify a
+\code{arg.hunt_fun} and \code{predict_fun_hunt} are used to specify a
 customized hunting method.}
 
 \item{hunt_fun}{Default \code{NULL}.
@@ -49,7 +49,7 @@ squares, i.e., by minimizing \eqn{\sum_i w_i (y_i - g(x_i))^2};
 otherwise, for \code{'vanilla'} hunting,
 this function must have signature \code{hunt_fun(y, X, ...)} that
 returns an \emph{alternative model} fitted in any fashion.
-The returned object \code{g} must support \code{predict_fun_alt(g, X)}
+The returned object \code{g} must support \code{predict_fun_hunt(g, X)}
 for evaluation.}
 
 \item{trim.outlier.hunt}{If \code{TRUE} (default),
@@ -68,8 +68,8 @@ one can also specify a 3-way split for hunt, debiasing and test respectively.}
 \item{arg.hunt_fun}{Extra arguments (default \code{NULL}) passed to the
 customized \code{hunt.fun}.}
 
-\item{predict_fun_alt}{When a customized \code{hunt.fun} is used, this is a
-function with signature \code{predict_fun_alt(fit, X)} returning a numeric
+\item{predict_fun_hunt}{When a customized \code{hunt.fun} is used, this is a
+function with signature \code{predict_fun_hunt(fit, X)} returning a numeric
 vector of predictions from a fitted alternative model produced by
 \code{hunt_fun()}.}
 

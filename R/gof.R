@@ -41,7 +41,7 @@ gof_test.default <- function(object, ...) {
 #'   \item \code{'grf'}: regression forest from package \code{grf}.
 #'   }
 #'   When this is set to any other value, arguments \code{hunt_fun},
-#'   \code{arg.hunt_fun} and \code{predict_fun_alt} are used to specify a
+#'   \code{arg.hunt_fun} and \code{predict_fun_hunt} are used to specify a
 #'   customized hunting method.
 #' @param hunt_fun Default \code{NULL}. 
 #'   When \code{hunt.method} is not set to a built-in method, 
@@ -53,7 +53,7 @@ gof_test.default <- function(object, ...) {
 #'   otherwise, for \code{'vanilla'} hunting,
 #'   this function must have signature \code{hunt_fun(y, X, ...)} that 
 #'   returns an \emph{alternative model} fitted in any fashion. 
-#'   The returned object \code{g} must support \code{predict_fun_alt(g, X)} 
+#'   The returned object \code{g} must support \code{predict_fun_hunt(g, X)} 
 #'   for evaluation.
 #' @param trim.outlier.hunt If \code{TRUE} (default), 
 #'   extreme values produced by the hunted function will be trimmed using Tukey's 
@@ -67,8 +67,8 @@ gof_test.default <- function(object, ...) {
 #'   one can also specify a 3-way split for hunt, debiasing and test respectively.
 #' @param arg.hunt_fun Extra arguments (default \code{NULL}) passed to the 
 #'   customized \code{hunt.fun}.
-#' @param predict_fun_alt When a customized \code{hunt.fun} is used, this is a 
-#' function with signature \code{predict_fun_alt(fit, X)} returning a numeric 
+#' @param predict_fun_hunt When a customized \code{hunt.fun} is used, this is a 
+#' function with signature \code{predict_fun_hunt(fit, X)} returning a numeric 
 #' vector of predictions from a fitted alternative model produced by 
 #' \code{hunt_fun()}.
 #' @param verbose Default \code{FALSE}; information is printed if set to
@@ -100,7 +100,7 @@ gof_test.glm <- function(object,
                          X.cols.exclude=NULL,
                          splits=c(0.5, 0.5),
                          arg.hunt_fun=NULL,
-                         predict_fun_alt=NULL,
+                         predict_fun_hunt=NULL,
                          verbose=FALSE,
                          ...) {
     # extract data
@@ -167,7 +167,7 @@ gof_test.glm <- function(object,
                splits=splits, 
                arg.hunt_fun=arg.hunt_fun,
                predict_fun=predict_fun,
-               predict_fun_alt=predict_fun_alt,
+               predict_fun_hunt=predict_fun_hunt,
                verbose=verbose)
 }
 
@@ -256,7 +256,7 @@ gof_test.gam <- function(object,
                          X.cols.exclude = NULL,
                          splits = c(0.5, 0.5),
                          arg.hunt_fun = NULL,
-                         predict_fun_alt = NULL,
+                         predict_fun_hunt = NULL,
                          verbose = FALSE,
                          ...) {
     # extract data
@@ -352,6 +352,6 @@ gof_test.gam <- function(object,
                splits = splits,
                arg.hunt_fun = arg.hunt_fun,
                predict_fun = predict_fun,
-               predict_fun_alt = predict_fun_alt,
+               predict_fun_hunt = predict_fun_hunt,
                verbose = verbose)
 }

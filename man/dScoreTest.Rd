@@ -16,6 +16,8 @@ dScoreTest(
   hunt.style = "optimal",
   hunt.method = "grf",
   hunt_fun = NULL,
+  debias.method = "standard",
+  debias_fun = NULL,
   trim.outlier.hunt = TRUE,
   X.cols.hunt = 1:ncol(X),
   splits = c(0.5, 0.5),
@@ -23,7 +25,7 @@ dScoreTest(
   arg.wls_method = NULL,
   arg.hunt_fun = NULL,
   predict_fun = stats::predict,
-  predict_fun_alt = NULL,
+  predict_fun_hunt = NULL,
   verbose = FALSE
 )
 }
@@ -65,7 +67,7 @@ least squares.  See \code{\link{hunt_vanilla}}.}}
 \item \code{'grf'}: regression forest from package \code{grf}.
 }
 When this is set to any other value, arguments \code{hunt_fun} and
-\code{predict_fun_alt} must be set properly to supply a customized
+\code{predict_fun_hunt} must be set properly to supply a customized
 hunting method.}
 
 \item{hunt_fun}{Default \code{NULL}.
@@ -78,8 +80,20 @@ squares, i.e., by minimizing \eqn{\sum_i w_i (y_i - g(x_i))^2};
 otherwise, for \code{'vanilla'} hunting,
 this function must have signature \code{hunt_fun(y, X, ...)} that
 returns an \emph{alternative model} fitted in any fashion.
-The returned object \code{g} must support \code{predict_fun_alt(g, X)}
+The returned object \code{g} must support \code{predict_fun_hunt(g, X)}
 for evaluation.}
+
+\item{debias.method}{Debiasing method. Currently available:
+\itemize{
+\item \code{'standard'}: standard debiasing (default). See
+\code{\link{debias_standard}}.
+}
+When set to any other value, \code{debias_fun} must be supplied.}
+
+\item{debias_fun}{Default \code{NULL}. When \code{debias.method} is not
+\code{'standard'}, this is a customized debiasing function with the same
+signature as \code{\link{debias_standard}}, returning a list with an
+element \code{h}, the debiased hunted function.}
 
 \item{trim.outlier.hunt}{If \code{TRUE} (default),
 extreme values produced by the hunted function will be trimmed using Tukey's
@@ -112,9 +126,9 @@ Note that if \code{fit} is \eqn{\hat{f}}, this function should return
 When y is binary, it must also support signature
 \code{predict_fun(fit, X, type='response')} for returning probabilities.}
 
-\item{predict_fun_alt}{Default \code{NULL}.
+\item{predict_fun_hunt}{Default \code{NULL}.
 When \code{hunt.method} is not set to a built-in method, this is a function
-with signature \code{predict_fun_alt(fit, X)}
+with signature \code{predict_fun_hunt(fit, X)}
 returning a numeric vector of predictions from a fitted alternative model
 produced by \code{hunt_fun()}.}
 
