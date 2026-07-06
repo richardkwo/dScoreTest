@@ -17,3 +17,4 @@
 ^README\.Rmd$
 ^vignettes/articles$
 ^cran-comments\.md$
+^\.positai$

@@ -93,3 +93,4 @@ rsconnect/
 .claude/
 docs
 inst/doc
+.positai
