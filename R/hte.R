@@ -360,9 +360,12 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 #' Customized debiasing for [hte_test_conditional()]
 #'
 #' For a hunt \eqn{\hat{h}(t,Z) = (1-t) \cdot \hat{h}(0,Z) + t \cdot \hat{h}(1, Z)}, it can 
-#' be rewritten as \deqn{\hat{h}(t,Z) = \hat{h}(0,Z) + t \cdot \hat{\tau}(Z))} for 
+#' be rewritten as \deqn{\hat{h}(t,Z) = \hat{h}(0,Z) + t \cdot \hat{\tau}(Z)} for 
 #' \eqn{\hat{\tau}(Z) := \hat{h}(1,Z) - \hat{h}(0,Z)}. The returned debiased hunt 
 #' is \deqn{\hat{m}_{\hat{h}}(t,Z) = \hat{h}(0,Z) + t \cdot \hat{m}_{\hat{\tau}}(Z).}
+#' 
+#' @details Function \eqn{\hat{m}_{\hat{\tau}}} is fitted using
+#' \deqn{\mathbb{E}[\hat{h}(T,Z) - \hat{m}_{\hat{h}}(T,Z)]^2 = P(T=1) \, \mathbb{E}\left[ (\hat{\tau}(Z) - \hat{m}_{\hat{\tau}}(Z))^2 \mid T=1\right].}
 #'
 #' @param h.hat Object of class \code{hunt} produced by [hunt_optimal()], 
 #'      [hunt_wls()] or [hunt_vanilla()], where \code{h.hat$h(X)} is \eqn{\hat{h}(t, Z)} for 
@@ -379,16 +382,32 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
                                    predict_fun, weight_fun, wls_method, arg.wls_method) {
     # debias the CATE, fit with constant weight (square loss)
+    Tr.debias <- X.debias[, 1]
     Z.debias  <- X.debias[, -1, drop = FALSE]
-    # create T=0 and T=1 when mu_0 is set to zero
-    .y.1 <- h.hat$h(cbind(rep(1, nrow(Z.debias)), Z.debias)) - 
+    p <- ncol(Z.debias)
+    S <- arg.wls_method$S
+    # only keep those debiased sample with T=1 and predict CATE
+    stopifnot("Must have data with T=1 in the debiasing sample" = sum(Tr.debias) > 0)
+    Z.debias <- Z.debias[Tr.debias==1, ,drop = FALSE]
+    yhat.debias <- h.hat$h(cbind(rep(1, nrow(Z.debias)), Z.debias)) - 
         h.hat$h(cbind(rep(0, nrow(Z.debias)), Z.debias))
-    .n <- length(.y.1)
-    .y.0 <- rep(0, .n)
-    .X <- rbind(X.debias, X.debias)
-    .X[,1] <- rep(c(0,1), each=.n)
-    m.CATE.fit <- do.call(fit_CATE, c(list(c(.y.0, .y.1), .X, rep(1, 2 * .n)), 
-                                      arg.wls_method))
+    Sc <- setdiff(seq_len(p), S)
+    if (length(Sc) == 0) {
+        # constant function
+        m.h.const <- mean(yhat.debias)
+        CATE_fun <- function(Z) {
+            rep(m.h.const, nrow(as.matrix(Z)))
+        }
+    } else {
+        # function of Sc
+        m.h.fit <- grf::regression_forest(Z.debias[, Sc, drop=FALSE], yhat.debias,
+                                           honesty = FALSE,
+                                           tune.parameters = "all")
+        CATE_fun <- function(Z) {
+            stats::predict(m.h.fit, Z[, Sc, drop=FALSE])$predictions
+        }
+    }
+    m.CATE.fit <- list(control_mean_fun=NULL, CATE_fun=CATE_fun)
     # debiased h = T * (h.CATE - m.h.CATE)
     h <- function(X.new) {
         Tr.new <- X.new[,1]
