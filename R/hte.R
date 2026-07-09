@@ -88,7 +88,8 @@ fit_CATE <- function(y, X, w=rep(1, nrow(X)),
                                         honesty = FALSE,
                                         tune.parameters = "all")
         e.fit <- grf::probability_forest(Z[train, , drop = FALSE],
-                                         as.factor(Tr[train]))
+                                         as.factor(Tr[train]), 
+                                         honesty=FALSE)
         m.pred <- stats::predict(m.fit, Z[test, , drop = FALSE])$predictions
         e.pred <- stats::predict(e.fit, Z[test, , drop = FALSE])$predictions[, "1"]
         Y.tilde[test] <- y[test] - m.pred
@@ -110,21 +111,6 @@ fit_CATE <- function(y, X, w=rep(1, nrow(X)),
                                            sample.weights = T.tilde^2 * w,
                                            honesty = FALSE,
                                            tune.parameters = "all")
-        # # prevent fitting a constant function
-        # if (all(grf::variable_importance(cate.fit)[,1] == 0)) {
-        #     params <- cate.fit$tunable.params
-        #     # increase sample.fraction and refit
-        #     params$sample.fraction <- max(params$sample.fraction, 
-        #                                   params$min.node.size / length(y) * 2)
-        #     cate.fit <- grf::regression_forest(Z[, Sc, drop = FALSE], pseudo,
-        #                                        sample.weights = T.tilde^2 * w, 
-        #                                       sample.fraction=params$sample.fraction,
-        #                                       mtry=params$mtry,
-        #                                       min.node.size=params$min.node.size,
-        #                                       alpha=params$alpha,
-        #                                       imbalance.penalty=params$imbalance.penalty, 
-        #                                       honesty=FALSE)
-        # } 
         CATE_fun <- function(Z) {
             Z.new <- as.matrix(Z)
             stats::predict(cate.fit, Z.new[, Sc, drop = FALSE])$predictions
@@ -387,7 +373,8 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 #'     with signature \code{h(X)}.}
 #'   }
 debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
-                                   predict_fun, weight_fun, wls_method, arg.wls_method) {
+                                   predict_fun, weight_fun, 
+                                   wls_method, arg.wls_method) {
     # debias the CATE, fit with constant weight (square loss)
     Tr.debias <- X.debias[, 1]
     Z.debias  <- X.debias[, -1, drop = FALSE]
@@ -396,7 +383,9 @@ debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
     S <- arg.wls_method$S
     stopifnot("Must have both T=1 and T=0 in the debiasing sample" = 
                   (sum(Tr.debias) > 0 && sum(Tr.debias) < n.debias))
-    e.fit <- grf::probability_forest(Z.debias, as.factor(Tr.debias))
+    
+    e.fit <- grf::probability_forest(Z.debias, as.factor(Tr.debias),
+                                     honesty=FALSE)
     e.pred <- stats::predict(e.fit, Z.debias)$predictions[, "1"]
     # fit m_{\Delta} (i.e., CATE) on Z_{Sc}
     pred.h.delta <- h.hat$h(cbind(rep(1, n.debias), Z.debias)) - 
