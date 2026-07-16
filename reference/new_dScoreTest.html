@@ -13,7 +13,7 @@ resolved arguments — no defaults are inferred from the data."><meta property="
 
     <a class="navbar-brand me-2" href="../index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@ resolved arguments — no defaults are inferred from the data."><meta property="
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="../articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -65,17 +66,19 @@ resolved arguments — no defaults are inferred from the data.</p>
 <span>  <span class="va">wls_method</span>,</span>
 <span>  hunt.style <span class="op">=</span> <span class="st">"optimal"</span>,</span>
 <span>  hunt.method <span class="op">=</span> <span class="st">"customized"</span>,</span>
-<span>  fit_alt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  wls_alt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  debias.method <span class="op">=</span> <span class="st">"standard"</span>,</span>
+<span>  debias_fun <span class="op">=</span> <span class="va">debias_standard</span>,</span>
+<span>  fit_hunt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  wls_hunt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  X.cols.hunt <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
 <span>  binary.y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  trim.outlier.hunt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  predict_fun <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span>,</span>
-<span>  predict_fun_alt <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span>,</span>
+<span>  predict_fun_hunt <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span>,</span>
 <span>  arg.fit_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  arg.wls_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  arg.fit_alt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  arg.wls_alt_method <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  arg.fit_hunt_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  arg.wls_hunt_method <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -138,18 +141,29 @@ must support <code>predict_fun(fit, X)</code>.</p></dd>
 <dd><p>String for the hunting method.</p></dd>
 
 
-<dt id="arg-fit-alt-method">fit_alt_method<a class="anchor" aria-label="anchor" href="#arg-fit-alt-method"></a></dt>
+<dt id="arg-debias-method">debias.method<a class="anchor" aria-label="anchor" href="#arg-debias-method"></a></dt>
+<dd><p>String for the debiasing method, recorded in the
+returned object's <code>Call</code>.</p></dd>
+
+
+<dt id="arg-debias-fun">debias_fun<a class="anchor" aria-label="anchor" href="#arg-debias-fun"></a></dt>
+<dd><p>Function performing the debiasing, with the same signature
+as <code><a href="debias_standard.html">debias_standard</a></code> (the default). Must return a list with an
+element <code>h</code>, the debiased hunted function.</p></dd>
+
+
+<dt id="arg-fit-hunt-method">fit_hunt_method<a class="anchor" aria-label="anchor" href="#arg-fit-hunt-method"></a></dt>
 <dd><p>Required when <code>hunt.style = "vanilla"</code>;
 ignored otherwise. Function with signature
-<code>fit_alt_method(y, X, ...)</code> returning a fitted alternative model
-that supports <code>predict_fun_alt(g, X)</code>.</p></dd>
+<code>fit_hunt_method(y, X, ...)</code> returning a fitted alternative model
+that supports <code>predict_fun_hunt(g, X)</code>.</p></dd>
 
 
-<dt id="arg-wls-alt-method">wls_alt_method<a class="anchor" aria-label="anchor" href="#arg-wls-alt-method"></a></dt>
+<dt id="arg-wls-hunt-method">wls_hunt_method<a class="anchor" aria-label="anchor" href="#arg-wls-hunt-method"></a></dt>
 <dd><p>Required when <code>hunt.style %in% c("optimal", "wls")</code>;
 ignored otherwise. Function with signature
-<code>wls_alt_method(y, X, w, ...)</code> returning a fitted alternative model
-that supports <code>predict_fun_alt(g, X)</code>.</p></dd>
+<code>wls_hunt_method(y, X, w, ...)</code> returning a fitted alternative model
+that supports <code>predict_fun_hunt(g, X)</code>.</p></dd>
 
 
 <dt id="arg-x-cols-hunt">X.cols.hunt<a class="anchor" aria-label="anchor" href="#arg-x-cols-hunt"></a></dt>
@@ -172,15 +186,15 @@ in the hunted function will be removed using Tukey's IQR rule.</p></dd>
 
 <dt id="arg-predict-fun">predict_fun<a class="anchor" aria-label="anchor" href="#arg-predict-fun"></a></dt>
 <dd><p>Function with signature <code>predict_fun(fit, X)</code>
-returning predictions from null-model fits. Default <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">stats::predict</a></code>.</p></dd>
+returning predictions from a fitted null model. Default <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">stats::predict</a></code>.</p></dd>
 
 
-<dt id="arg-predict-fun-alt">predict_fun_alt<a class="anchor" aria-label="anchor" href="#arg-predict-fun-alt"></a></dt>
-<dd><p>Function with signature <code>predict_fun_alt(fit, X)</code>
-returning predictions from alt-model fits. Default <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">stats::predict</a></code>.</p></dd>
+<dt id="arg-predict-fun-hunt">predict_fun_hunt<a class="anchor" aria-label="anchor" href="#arg-predict-fun-hunt"></a></dt>
+<dd><p>Function with signature <code>predict_fun_hunt(fit, X)</code>
+returning predictions from a model fitted under alternative. Default <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">stats::predict</a></code>.</p></dd>
 
 
-<dt id="arg-arg-fit-method-arg-wls-method-arg-fit-alt-method-arg-wls-alt-method">arg.fit_method, arg.wls_method, arg.fit_alt_method, arg.wls_alt_method<a class="anchor" aria-label="anchor" href="#arg-arg-fit-method-arg-wls-method-arg-fit-alt-method-arg-wls-alt-method"></a></dt>
+<dt id="arg-arg-fit-method-arg-wls-method-arg-fit-hunt-method-arg-wls-hunt-method">arg.fit_method, arg.wls_method, arg.fit_hunt_method, arg.wls_hunt_method<a class="anchor" aria-label="anchor" href="#arg-arg-fit-method-arg-wls-method-arg-fit-hunt-method-arg-wls-hunt-method"></a></dt>
 <dd><p>Named lists of additional arguments forwarded to the corresponding
 fitter via <code>do.call</code>. Default <code>NULL</code>.</p></dd>
 
@@ -205,7 +219,8 @@ normal).</p></dd>
 <dd><p>Hunted direction before the outer debias projection.</p></dd>
 
 <dt><code>hunted_fun</code></dt>
-<dd><p>The hunted function that can be applied to X.</p></dd>
+<dd><p>The debiased hunted function
+\(\hat{h} - \hat{m}_{\hat{h}}\), a function that can be applied to X.</p></dd>
 
 <dt><code>Data</code></dt>
 <dd><p>List with <code>X</code>, <code>y</code>, and the three index
@@ -213,8 +228,8 @@ vectors.</p></dd>
 
 <dt><code>Call</code></dt>
 <dd><p>Named list of methods,
-<code>hunt.style</code>, <code>hunt.method</code>, both predict functions,
-and the four <code>arg.*</code> lists.</p></dd>
+<code>hunt.style</code>, <code>hunt.method</code>, <code>debias.method</code>, both
+predict functions, and the four <code>arg.*</code> lists.</p></dd>
 
 
 </dl></div>

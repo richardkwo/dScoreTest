@@ -25,7 +25,7 @@ alternative."><meta property="og:image" content="https://unbiased.co.in/dScoreTe
 
     <a class="navbar-brand me-2" href="../index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@ alternative."><meta property="og:image" content="https://unbiased.co.in/dScoreTe
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="../articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -81,6 +82,8 @@ alternative.</p>
 <span>  hunt.style <span class="op">=</span> <span class="st">"optimal"</span>,</span>
 <span>  hunt.method <span class="op">=</span> <span class="st">"grf"</span>,</span>
 <span>  hunt_fun <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  debias.method <span class="op">=</span> <span class="st">"standard"</span>,</span>
+<span>  debias_fun <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  trim.outlier.hunt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  X.cols.hunt <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
 <span>  splits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
@@ -88,7 +91,7 @@ alternative.</p>
 <span>  arg.wls_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  arg.hunt_fun <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  predict_fun <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span>,</span>
-<span>  predict_fun_alt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  predict_fun_hunt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -145,7 +148,7 @@ least squares.  See <code><a href="hunt_vanilla.html">hunt_vanilla</a></code>.</
 <dt id="arg-hunt-method">hunt.method<a class="anchor" aria-label="anchor" href="#arg-hunt-method"></a></dt>
 <dd><p>Built-in method for hunting. Currently available:</p><ul><li><p><code>'grf'</code>: regression forest from package <code>grf</code>.</p></li>
 </ul><p>When this is set to any other value, arguments <code>hunt_fun</code> and
-<code>predict_fun_alt</code> must be set properly to supply a customized
+<code>predict_fun_hunt</code> must be set properly to supply a customized
 hunting method.</p></dd>
 
 
@@ -160,8 +163,21 @@ squares, i.e., by minimizing \(\sum_i w_i (y_i - g(x_i))^2\);
 otherwise, for <code>'vanilla'</code> hunting,
 this function must have signature <code>hunt_fun(y, X, ...)</code> that
 returns an <em>alternative model</em> fitted in any fashion.
-The returned object <code>g</code> must support <code>predict_fun_alt(g, X)</code>
+The returned object <code>g</code> must support <code>predict_fun_hunt(g, X)</code>
 for evaluation.</p></dd>
+
+
+<dt id="arg-debias-method">debias.method<a class="anchor" aria-label="anchor" href="#arg-debias-method"></a></dt>
+<dd><p>Debiasing method. Currently available:</p><ul><li><p><code>'standard'</code>: standard debiasing (default). See
+<code><a href="debias_standard.html">debias_standard</a></code>.</p></li>
+</ul><p>When set to any other value, <code>debias_fun</code> must be supplied.</p></dd>
+
+
+<dt id="arg-debias-fun">debias_fun<a class="anchor" aria-label="anchor" href="#arg-debias-fun"></a></dt>
+<dd><p>Default <code>NULL</code>. When <code>debias.method</code> is not
+<code>'standard'</code>, this is a customized debiasing function with the same
+signature as <code><a href="debias_standard.html">debias_standard</a></code>, returning a list with an
+element <code>h</code>, the debiased hunted function.</p></dd>
 
 
 <dt id="arg-trim-outlier-hunt">trim.outlier.hunt<a class="anchor" aria-label="anchor" href="#arg-trim-outlier-hunt"></a></dt>
@@ -209,10 +225,10 @@ When y is binary, it must also support signature
 <code>predict_fun(fit, X, type='response')</code> for returning probabilities.</p></dd>
 
 
-<dt id="arg-predict-fun-alt">predict_fun_alt<a class="anchor" aria-label="anchor" href="#arg-predict-fun-alt"></a></dt>
+<dt id="arg-predict-fun-hunt">predict_fun_hunt<a class="anchor" aria-label="anchor" href="#arg-predict-fun-hunt"></a></dt>
 <dd><p>Default <code>NULL</code>.
 When <code>hunt.method</code> is not set to a built-in method, this is a function
-with signature <code>predict_fun_alt(fit, X)</code>
+with signature <code>predict_fun_hunt(fit, X)</code>
 returning a numeric vector of predictions from a fitted alternative model
 produced by <code>hunt_fun()</code>.</p></dd>
 

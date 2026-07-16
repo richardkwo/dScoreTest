@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="../articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -104,7 +105,7 @@ forest. A correctly specified additive smooth model is not rejected:</p>
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.smooth</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 0.6274, p-value = 0.265214</span></span></code></pre></div>
@@ -121,7 +122,7 @@ the model is rejected.</p>
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.linear</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 9.7238, p-value = 1.19302e-22</span></span></code></pre></div>
@@ -134,7 +135,7 @@ in the data-generating mechanism, an additive regression model without
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.drop3</span><span class="op">)</span>   <span class="co"># f3 = 0, still well-specified given (x0, x1, x2)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -2.3486, p-value = 0.990578</span></span></code></pre></div>
@@ -146,7 +147,7 @@ illustrated below.</p>
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.drop23</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -0.4014, p-value = 0.655919</span></span></code></pre></div>
@@ -179,7 +180,7 @@ the full model.</p>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 11.8263, p-value = 1.42765e-32</span></span></code></pre></div>
@@ -202,32 +203,64 @@ statistic, so you can see how much the outer orthogonalization step
 moved it:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Debiased score test</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
-<span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
+<span><span class="co">#&gt; $t.stat</span></span>
+<span><span class="co">#&gt; [1] 11.82628</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Debiased:  T =  11.8263,  p = 1.42765e-32</span></span>
-<span><span class="co">#&gt;   Raw:       T =  12.2269,  p = 1.11664e-34  (may contain bias)</span></span>
+<span><span class="co">#&gt; $p.val</span></span>
+<span><span class="co">#&gt; [1] 1.427647e-32</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; L = resids * h (debiased):</span></span>
+<span><span class="co">#&gt; $t.raw</span></span>
+<span><span class="co">#&gt; [1] 12.22689</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $p.raw</span></span>
+<span><span class="co">#&gt; [1] 1.116641e-34</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $n</span></span>
+<span><span class="co">#&gt; [1] 400</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $n.hunt</span></span>
+<span><span class="co">#&gt; [1] 200</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $n.debias</span></span>
+<span><span class="co">#&gt; [1] 200</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $n.test</span></span>
+<span><span class="co">#&gt; [1] 200</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $twoway</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $hunt.style</span></span>
+<span><span class="co">#&gt; [1] "optimal"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $hunt.method</span></span>
+<span><span class="co">#&gt; [1] "gam"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $na.L</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $L.summary</span></span>
 <span><span class="co">#&gt;     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. </span></span>
 <span><span class="co">#&gt; -0.76145  0.01556  0.30110  0.39152  0.69664  1.91380 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; L.raw = resids * h.raw:</span></span>
+<span><span class="co">#&gt; $L.raw.summary</span></span>
 <span><span class="co">#&gt;     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. </span></span>
 <span><span class="co">#&gt; -0.69498  0.02234  0.31879  0.39152  0.66576  1.85184 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; h (debiased hunted direction):</span></span>
+<span><span class="co">#&gt; $h.summary</span></span>
 <span><span class="co">#&gt;     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. </span></span>
 <span><span class="co">#&gt; -0.31512 -0.15726 -0.04016  0.00000  0.17892  0.38897 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; h.raw (before outer debias):</span></span>
+<span><span class="co">#&gt; $h.raw.summary</span></span>
 <span><span class="co">#&gt;      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. </span></span>
 <span><span class="co">#&gt; -0.328412 -0.171114 -0.045389 -0.009752  0.174042  0.410749 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; resids (score residuals on test):</span></span>
+<span><span class="co">#&gt; $resids.summary</span></span>
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span><span class="co">#&gt; -7.2341 -2.4313 -0.2759  0.0000  1.9564  8.2962</span></span></code></pre></div>
+<span><span class="co">#&gt; -7.2341 -2.4313 -0.2759  0.0000  1.9564  8.2962 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "summary.dScoreTest"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="hunt-styles">Hunt styles<a class="anchor" aria-label="anchor" href="#hunt-styles"></a>
@@ -238,14 +271,14 @@ default; the WLS hunt is simpler and sometimes nearly as powerful:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.drop23</span>, <span class="va">fit.full</span>, hunt.style <span class="op">=</span> <span class="st">"optimal"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 10.0491, p-value = 4.63434e-24</span></span>
 <span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.drop23</span>, <span class="va">fit.full</span>, hunt.style <span class="op">=</span> <span class="st">"wls"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = wls, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = wls, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 10.1919, p-value = 1.07797e-24</span></span></code></pre></div>
@@ -352,7 +385,7 @@ is itself well-specified:</p>
 <span><span class="va">gof.1</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of svi, gleason, log.can.vol, log.weight, age, log.BPH, log.cap.pen, pgg45.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 97, two-way split: hunt = 48, debias &amp; test = 49</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -0.2882, p-value = 0.613421</span></span>
@@ -371,7 +404,7 @@ is itself well-specified:</p>
 <span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of svi, gleason, log.can.vol, log.weight, age, log.BPH, log.cap.pen, pgg45.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 97, two-way split: hunt = 48, debias &amp; test = 49</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -1.5025, p-value = 0.933513</span></span></code></pre></div>
@@ -407,7 +440,7 @@ between splits (cf. the harmonic-mean p-value of Wilson, 2019):</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">pvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span><span class="op">$</span><span class="va">p.val</span><span class="op">)</span></span>
 <span><span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">pvals</span><span class="op">)</span>   <span class="co"># harmonic-mean p-value</span></span>
-<span><span class="co">#&gt; [1] 0.01681002</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.01680784</span></span></code></pre></div>
 <p>The aggregated p-value seems to agree with the mgcv’s result.</p>
 </div>
 </div>

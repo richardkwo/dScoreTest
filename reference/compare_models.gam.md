@@ -102,7 +102,7 @@ arguments, and multi-column responses are not supported.
  compare_models(fit.0, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 0.2087, p-value = 0.417349
@@ -123,7 +123,7 @@ arguments, and multi-column responses are not supported.
  compare_models(fit.00, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 13.7484, p-value = 2.60309e-43
@@ -133,7 +133,7 @@ arguments, and multi-column responses are not supported.
  compare_models(fit.00, fit.1, hunt.style="wls")
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = wls, hunt.method = gam)
+#> (hunt.style = wls, hunt.method = gam, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 13.2812, p-value = 1.48754e-40

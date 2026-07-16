@@ -43,7 +43,7 @@ fit.smooth <- gam(y ~ s(x0) + s(x1) + s(x2) + s(x3), data = dat)
 gof_test(fit.smooth)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 0.6274, p-value = 0.265214
@@ -61,7 +61,7 @@ fit.linear <- lm(y ~ x0 + x1 + x2 + x3, data = dat)
 gof_test(fit.linear)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 9.7238, p-value = 1.19302e-22
@@ -76,7 +76,7 @@ fit.drop3 <- gam(y ~ s(x0) + s(x1) + s(x2), data = dat)
 gof_test(fit.drop3)   # f3 = 0, still well-specified given (x0, x1, x2)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = -2.3486, p-value = 0.990578
@@ -91,7 +91,7 @@ fit.drop23 <- gam(y ~ s(x0) + s(x1), data=dat)
 gof_test(fit.drop23)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = -0.4014, p-value = 0.655919
@@ -128,7 +128,7 @@ res <- compare_models(fit.drop23, fit.full)
 res
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 11.8263, p-value = 1.42765e-32
@@ -158,32 +158,64 @@ outer orthogonalization step moved it:
 ``` r
 
 summary(res)
-#> Debiased score test
-#> (hunt.style = optimal, hunt.method = gam)
-#> n = 400, two-way split: hunt = 200, debias & test = 200
+#> $t.stat
+#> [1] 11.82628
 #> 
-#>   Debiased:  T =  11.8263,  p = 1.42765e-32
-#>   Raw:       T =  12.2269,  p = 1.11664e-34  (may contain bias)
+#> $p.val
+#> [1] 1.427647e-32
 #> 
-#> L = resids * h (debiased):
+#> $t.raw
+#> [1] 12.22689
+#> 
+#> $p.raw
+#> [1] 1.116641e-34
+#> 
+#> $n
+#> [1] 400
+#> 
+#> $n.hunt
+#> [1] 200
+#> 
+#> $n.debias
+#> [1] 200
+#> 
+#> $n.test
+#> [1] 200
+#> 
+#> $twoway
+#> [1] TRUE
+#> 
+#> $hunt.style
+#> [1] "optimal"
+#> 
+#> $hunt.method
+#> [1] "gam"
+#> 
+#> $na.L
+#> [1] 0
+#> 
+#> $L.summary
 #>     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 #> -0.76145  0.01556  0.30110  0.39152  0.69664  1.91380 
 #> 
-#> L.raw = resids * h.raw:
+#> $L.raw.summary
 #>     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 #> -0.69498  0.02234  0.31879  0.39152  0.66576  1.85184 
 #> 
-#> h (debiased hunted direction):
+#> $h.summary
 #>     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 #> -0.31512 -0.15726 -0.04016  0.00000  0.17892  0.38897 
 #> 
-#> h.raw (before outer debias):
+#> $h.raw.summary
 #>      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
 #> -0.328412 -0.171114 -0.045389 -0.009752  0.174042  0.410749 
 #> 
-#> resids (score residuals on test):
+#> $resids.summary
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#> -7.2341 -2.4313 -0.2759  0.0000  1.9564  8.2962
+#> -7.2341 -2.4313 -0.2759  0.0000  1.9564  8.2962 
+#> 
+#> attr(,"class")
+#> [1] "summary.dScoreTest"
 ```
 
 ### Hunt styles
@@ -196,14 +228,14 @@ the WLS hunt is simpler and sometimes nearly as powerful:
 compare_models(fit.drop23, fit.full, hunt.style = "optimal")
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 10.0491, p-value = 4.63434e-24
 compare_models(fit.drop23, fit.full, hunt.style = "wls")
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = wls, hunt.method = gam)
+#> (hunt.style = wls, hunt.method = gam, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 10.1919, p-value = 1.07797e-24
@@ -319,7 +351,7 @@ gof.1 <- gof_test(fit.1)
 gof.1
 #> Debiased score test: 
 #> y ~ X, with X consists of svi, gleason, log.can.vol, log.weight, age, log.BPH, log.cap.pen, pgg45.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 97, two-way split: hunt = 48, debias & test = 49
 #> 
 #> T = -0.2882, p-value = 0.613421
@@ -342,7 +374,7 @@ set.seed(42)
 compare_models(fit.0, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of svi, gleason, log.can.vol, log.weight, age, log.BPH, log.cap.pen, pgg45.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 97, two-way split: hunt = 48, debias & test = 49
 #> 
 #> T = -1.5025, p-value = 0.933513
@@ -386,7 +418,7 @@ splits (cf. the harmonic-mean p-value of Wilson, 2019):
 set.seed(42)
 pvals <- replicate(200, compare_models(fit.0, fit.1)$p.val)
 1 / mean(1 / pvals)   # harmonic-mean p-value
-#> [1] 0.01681002
+#> [1] 0.01680784
 ```
 
 The aggregated p-value seems to agree with the mgcv’s result.

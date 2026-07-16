@@ -51,7 +51,7 @@ methods.
  gof_test(fit.0)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = -0.2426, p-value = 0.595837
@@ -61,7 +61,7 @@ methods.
  gof_test(fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 9.0599, p-value = 6.53019e-20

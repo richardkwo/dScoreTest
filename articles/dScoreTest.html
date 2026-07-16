@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="../articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -126,7 +127,7 @@ truth that is linear in <code>x1</code> and <code>x2</code>:</p>
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), x1, x2.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 300, two-way split: hunt = 150, debias &amp; test = 150</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -1.3137, p-value = 0.905519</span></span></code></pre></div>
@@ -139,7 +140,7 @@ the test does not reject.</p>
 <span><span class="fu"><a href="../reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.mis</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), x1, x2.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 300, two-way split: hunt = 150, debias &amp; test = 150</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 6.7450, p-value = 7.64993e-12</span></span></code></pre></div>
@@ -159,7 +160,7 @@ column:</p>
 <span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), x1, x1sq, x2.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 300, two-way split: hunt = 150, debias &amp; test = 150</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 5.3831, p-value = 3.65976e-08</span></span></code></pre></div>

@@ -1,29 +1,30 @@
 # Weighted-least-squares hunting
 
-Returns the hunted signal h as a function
+Hunt by fitting residuals on X, trained by solving a weighted least
+squares.
 
 ## Usage
 
 ``` r
 hunt_wls(
-  wls_alt_method,
+  wls_hunt_method,
   resids,
   X,
   X.cols = 1:ncol(X),
   trim.outlier = TRUE,
-  arg.wls_alt_method = NULL,
-  predict_fun_alt = stats::predict
+  arg.wls_hunt_method = NULL,
+  predict_fun_hunt = stats::predict
 )
 ```
 
 ## Arguments
 
-- wls_alt_method:
+- wls_hunt_method:
 
-  Function with signature `wls_alt_method(y, X, w, ...)` that returns a
+  Function with signature `wls_hunt_method(y, X, w, ...)` that returns a
   fitted *alternative model* \\\hat{g} \in \mathcal{G}\\ by minimizing
   \\\sum_i w_i (y_i - g(x_i))^2\\. The returned object must support
-  `predict_fun_alt(g, X)` for evaluation.
+  `predict_fun_hunt(g, X)` for evaluation.
 
 - resids:
 
@@ -42,17 +43,38 @@ hunt_wls(
   If `TRUE`, outliers in \\\hat{h}(X)\\ will be trimmed from the hunted
   \\\hat{h}\\ using Tukey's IQR rule.
 
-- arg.wls_alt_method:
+- arg.wls_hunt_method:
 
-  Named list of additional arguments passed to `wls_alt_method` (default
-  to `NULL`).
+  Named list of additional arguments passed to `wls_hunt_method`
+  (default to `NULL`).
 
-- predict_fun_alt:
+- predict_fun_hunt:
 
-  Function with signature `predict_fun_alt(fit, X)` returning a numeric
+  Function with signature `predict_fun_hunt(fit, X)` returning a numeric
   vector of predictions from the alternative-model fit. Default
   [`stats::predict`](https://rdrr.io/r/stats/predict.html).
 
 ## Value
 
-A function h with signature `h(X)`.
+An object of class `"hunt"`, a list with elements:
+
+- `hunt.fit`:
+
+  The fitted hunt model produced by `wls_hunt_method`.
+
+- `trim.bounds`:
+
+  The Tukey IQR trimming bounds, or `c(-Inf, Inf)` when
+  `trim.outlier = FALSE`.
+
+- `predict_fun_hunt`:
+
+  The prediction function for `hunt.fit`, as supplied.
+
+- `X.cols`:
+
+  The columns of `X` used for the hunt, as supplied.
+
+- `h`:
+
+  A function with signature `h(X)` giving the hunted signal.

@@ -24,6 +24,8 @@ dScoreTest(
   hunt.style = "optimal",
   hunt.method = "grf",
   hunt_fun = NULL,
+  debias.method = "standard",
+  debias_fun = NULL,
   trim.outlier.hunt = TRUE,
   X.cols.hunt = 1:ncol(X),
   splits = c(0.5, 0.5),
@@ -31,7 +33,7 @@ dScoreTest(
   arg.wls_method = NULL,
   arg.hunt_fun = NULL,
   predict_fun = stats::predict,
-  predict_fun_alt = NULL,
+  predict_fun_hunt = NULL,
   verbose = FALSE
 )
 ```
@@ -94,7 +96,7 @@ dScoreTest(
   - `'grf'`: regression forest from package `grf`.
 
   When this is set to any other value, arguments `hunt_fun` and
-  `predict_fun_alt` must be set properly to supply a customized hunting
+  `predict_fun_hunt` must be set properly to supply a customized hunting
   method.
 
 - hunt_fun:
@@ -107,7 +109,23 @@ dScoreTest(
   minimizing \\\sum_i w_i (y_i - g(x_i))^2\\; otherwise, for `'vanilla'`
   hunting, this function must have signature `hunt_fun(y, X, ...)` that
   returns an *alternative model* fitted in any fashion. The returned
-  object `g` must support `predict_fun_alt(g, X)` for evaluation.
+  object `g` must support `predict_fun_hunt(g, X)` for evaluation.
+
+- debias.method:
+
+  Debiasing method. Currently available:
+
+  - `'standard'`: standard debiasing (default). See
+    [`debias_standard`](https://unbiased.co.in/dScoreTest/reference/debias_standard.md).
+
+  When set to any other value, `debias_fun` must be supplied.
+
+- debias_fun:
+
+  Default `NULL`. When `debias.method` is not `'standard'`, this is a
+  customized debiasing function with the same signature as
+  [`debias_standard`](https://unbiased.co.in/dScoreTest/reference/debias_standard.md),
+  returning a list with an element `h`, the debiased hunted function.
 
 - trim.outlier.hunt:
 
@@ -152,10 +170,10 @@ dScoreTest(
   binary, it must also support signature
   `predict_fun(fit, X, type='response')` for returning probabilities.
 
-- predict_fun_alt:
+- predict_fun_hunt:
 
   Default `NULL`. When `hunt.method` is not set to a built-in method,
-  this is a function with signature `predict_fun_alt(fit, X)` returning
+  this is a function with signature `predict_fun_hunt(fit, X)` returning
   a numeric vector of predictions from a fitted alternative model
   produced by `hunt_fun()`.
 

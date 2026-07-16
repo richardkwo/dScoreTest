@@ -16,7 +16,7 @@ gof_test(
   X.cols.exclude = NULL,
   splits = c(0.5, 0.5),
   arg.hunt_fun = NULL,
-  predict_fun_alt = NULL,
+  predict_fun_hunt = NULL,
   verbose = FALSE,
   ...
 )
@@ -50,7 +50,7 @@ gof_test(
   - `'grf'`: regression forest from package `grf`.
 
   When this is set to any other value, arguments `hunt_fun`,
-  `arg.hunt_fun` and `predict_fun_alt` are used to specify a customized
+  `arg.hunt_fun` and `predict_fun_hunt` are used to specify a customized
   hunting method.
 
 - hunt_fun:
@@ -63,7 +63,7 @@ gof_test(
   minimizing \\\sum_i w_i (y_i - g(x_i))^2\\; otherwise, for `'vanilla'`
   hunting, this function must have signature `hunt_fun(y, X, ...)` that
   returns an *alternative model* fitted in any fashion. The returned
-  object `g` must support `predict_fun_alt(g, X)` for evaluation.
+  object `g` must support `predict_fun_hunt(g, X)` for evaluation.
 
 - trim.outlier.hunt:
 
@@ -87,10 +87,10 @@ gof_test(
 
   Extra arguments (default `NULL`) passed to the customized `hunt.fun`.
 
-- predict_fun_alt:
+- predict_fun_hunt:
 
   When a customized `hunt.fun` is used, this is a function with
-  signature `predict_fun_alt(fit, X)` returning a numeric vector of
+  signature `predict_fun_hunt(fit, X)` returning a numeric vector of
   predictions from a fitted alternative model produced by `hunt_fun()`.
 
 - verbose:

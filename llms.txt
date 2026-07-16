@@ -13,7 +13,8 @@ the plug-in bias from estimating the null model, yielding a test
 statistic that is asymptotically standard normal under the null without
 requiring a parametric form for the alternative. Methods are provided
 for `glm`, `lm`, and
-[`mgcv::gam`](https://rdrr.io/pkg/mgcv/man/gam.html) fits.
+[`mgcv::gam`](https://rdrr.io/pkg/mgcv/man/gam.html) fits as well as for
+detecting heterogeneous treatment effects.
 
 ## Installation
 
@@ -69,7 +70,7 @@ fit.gam <- gam(y ~ s(x0) + s(x1) + s(x2) + s(x3), data = dat)
 gof_test(fit.gam)   # well-specified: not rejected
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 0.6274, p-value = 0.265214
@@ -78,7 +79,7 @@ fit.lm <- lm(y ~ x0 + x1 + x2 + x3, data = dat)
 gof_test(fit.lm)   # misspecified: 
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 9.7238, p-value = 1.19302e-22
@@ -102,7 +103,7 @@ fit.gam.null <- gam(y ~ s(x0) + s(x1) + s(x2), data = dat)
 compare_models(fit.gam.null, fit.gam)
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 0.9375, p-value = 0.174243
@@ -113,7 +114,7 @@ res <- compare_models(fit.gam.mis, fit.gam)
 res
 #> Debiased score test: 
 #> y ~ X, with X consists of x0, x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = gam)
+#> (hunt.style = optimal, hunt.method = gam, debias.method = standard)
 #> n = 400, two-way split: hunt = 200, debias & test = 200
 #> 
 #> T = 9.5337, p-value = 7.58703e-22
@@ -178,6 +179,12 @@ The underlying debiased score test and its S3 methods.
 - [`summary(`*`<dScoreTest>`*`)`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
   [`print(`*`<summary.dScoreTest>`*`)`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
   : Summary of the score test
+- [`score_fun()`](https://unbiased.co.in/dScoreTest/reference/score_fun.md)
+  : Score for a fitted CATE model
+- [`weight_fun()`](https://unbiased.co.in/dScoreTest/reference/weight_fun.md)
+  : Weight for a fitted CATE model
+- [`debias_standard()`](https://unbiased.co.in/dScoreTest/reference/debias_standard.md)
+  : Standard debiasing
 
 ## Hunt algorithms
 
@@ -189,6 +196,18 @@ Routines that hunt for a direction of misspecification.
   : Weighted-least-squares hunting
 - [`hunt_vanilla()`](https://unbiased.co.in/dScoreTest/reference/hunt_vanilla.md)
   : Vanilla hunting
+
+## Heterogeneous treatment effects
+
+Testing for effect modification in a binary-treatment setting.
+
+- [`hte_test_conditional()`](https://unbiased.co.in/dScoreTest/reference/hte_test_conditional.md)
+  : Test for detecting heterogeneity in the conditional treatment effect
+  (CATE)
+- [`fit_CATE()`](https://unbiased.co.in/dScoreTest/reference/fit_CATE.md)
+  : Fit the conditional treatment effect (CATE) function
+- [`predict(`*`<CATE>`*`)`](https://unbiased.co.in/dScoreTest/reference/predict.CATE.md)
+  : Predict from a fitted CATE model
 
 ## Package
 
@@ -205,3 +224,5 @@ Routines that hunt for a direction of misspecification.
   models](https://unbiased.co.in/dScoreTest/articles/gam.md):
 - [Link function in
   GLM](https://unbiased.co.in/dScoreTest/articles/glm.md):
+- [Effect modification in HIV treatment
+  (ACTG175)](https://unbiased.co.in/dScoreTest/articles/hte.md):

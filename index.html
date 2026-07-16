@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Debiased Score Tests for Goodness of Fit and Model Comparison">
-<meta name="description" content="Debiased (Neyman-orthogonalized) score tests for assessing whether a semiparametric or parametric regression model is well-specified and for comparing nested models. The test employs a hunt-and-test strategy: on a held-out hunt sample, it fits the null model and uses machine learning to find a direction in which the null model's score seems positive; on an independent test sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for `glm`, `lm` and `mgcv::gam` fits.">
-<meta property="og:description" content="Debiased (Neyman-orthogonalized) score tests for assessing whether a semiparametric or parametric regression model is well-specified and for comparing nested models. The test employs a hunt-and-test strategy: on a held-out hunt sample, it fits the null model and uses machine learning to find a direction in which the null model's score seems positive; on an independent test sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for `glm`, `lm` and `mgcv::gam` fits.">
+<meta name="description" content="Debiased (Neyman-orthogonalized) score tests for assessing whether a semiparametric or parametric regression model is well-specified and for comparing nested models. The test employs a hunt-and-test strategy: on a held-out hunt sample, it fits the null model and uses machine learning to find a direction in which the null model's score seems positive; on an independent test sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for `glm`, `lm` and `mgcv::gam` fits as well as for detecting heterogeneous treatment effects.">
+<meta property="og:description" content="Debiased (Neyman-orthogonalized) score tests for assessing whether a semiparametric or parametric regression model is well-specified and for comparing nested models. The test employs a hunt-and-test strategy: on a held-out hunt sample, it fits the null model and uses machine learning to find a direction in which the null model's score seems positive; on an independent test sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for `glm`, `lm` and `mgcv::gam` fits as well as for detecting heterogeneous treatment effects.">
 <meta property="og:image" content="https://unbiased.co.in/dScoreTest/logo.png">
 </head>
 <body>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -68,7 +69,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>Debiased (Neyman-orthogonalized) score tests for assessing whether a semiparametric or parametric regression model is well-specified and for comparing nested models.</p>
-<p>The test uses a hunt-and-test strategy with sample splitting: on a held-out <em>hunt</em> sample, it fits the null model and uses machine learning to find a direction in which the null model’s score seems positive; on an independent <em>test</em> sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the plug-in bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for <code>glm</code>, <code>lm</code>, and <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam</a></code> fits.</p>
+<p>The test uses a hunt-and-test strategy with sample splitting: on a held-out <em>hunt</em> sample, it fits the null model and uses machine learning to find a direction in which the null model’s score seems positive; on an independent <em>test</em> sample, it assesses the significance of the score in the hunted direction. The test employs orthogonalization to eliminate the plug-in bias from estimating the null model, yielding a test statistic that is asymptotically standard normal under the null without requiring a parametric form for the alternative. Methods are provided for <code>glm</code>, <code>lm</code>, and <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam</a></code> fits as well as for detecting heterogeneous treatment effects.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -106,7 +107,7 @@
 <span><span class="fu"><a href="reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.gam</span><span class="op">)</span>   <span class="co"># well-specified: not rejected</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 0.6274, p-value = 0.265214</span></span>
@@ -115,7 +116,7 @@
 <span><span class="fu"><a href="reference/gof_test.html">gof_test</a></span><span class="op">(</span><span class="va">fit.lm</span><span class="op">)</span>   <span class="co"># misspecified: </span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 9.7238, p-value = 1.19302e-22</span></span></code></pre></div>
@@ -131,7 +132,7 @@
 <span><span class="fu"><a href="reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.gam.null</span>, <span class="va">fit.gam</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 0.9375, p-value = 0.174243</span></span>
@@ -142,7 +143,7 @@
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of x0, x1, x2, x3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = gam, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 9.5337, p-value = 7.58703e-22</span></span></code></pre></div>

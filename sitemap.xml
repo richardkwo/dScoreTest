@@ -5,6 +5,7 @@
 <url><loc>https://unbiased.co.in/dScoreTest/articles/dScoreTest.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/articles/gam.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/articles/glm.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/articles/hte.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/articles/index.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/authors.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/index.html</loc></url>
@@ -14,17 +15,24 @@
 <url><loc>https://unbiased.co.in/dScoreTest/reference/compare_models.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/compare_models.lm.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/dScoreTest.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/debias_hte_conditional.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/debias_standard.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/fit_CATE.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/gof_test.gam.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/gof_test.glm.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/gof_test.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/gof_test.lm.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/hte_test_conditional.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/hunt_optimal.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/hunt_vanilla.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/hunt_wls.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/index.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/new_dScoreTest.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/plot.dScoreTest.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/predict.CATE.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/print.dScoreTest.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/score_fun.html</loc></url>
 <url><loc>https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.html</loc></url>
+<url><loc>https://unbiased.co.in/dScoreTest/reference/weight_fun.html</loc></url>
 </urlset>
 

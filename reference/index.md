@@ -42,6 +42,12 @@ The underlying debiased score test and its S3 methods.
 - [`summary(`*`<dScoreTest>`*`)`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
   [`print(`*`<summary.dScoreTest>`*`)`](https://unbiased.co.in/dScoreTest/reference/summary.dScoreTest.md)
   : Summary of the score test
+- [`score_fun()`](https://unbiased.co.in/dScoreTest/reference/score_fun.md)
+  : Score for a fitted CATE model
+- [`weight_fun()`](https://unbiased.co.in/dScoreTest/reference/weight_fun.md)
+  : Weight for a fitted CATE model
+- [`debias_standard()`](https://unbiased.co.in/dScoreTest/reference/debias_standard.md)
+  : Standard debiasing
 
 ## Hunt algorithms
 
@@ -53,6 +59,18 @@ Routines that hunt for a direction of misspecification.
   : Weighted-least-squares hunting
 - [`hunt_vanilla()`](https://unbiased.co.in/dScoreTest/reference/hunt_vanilla.md)
   : Vanilla hunting
+
+## Heterogeneous treatment effects
+
+Testing for effect modification in a binary-treatment setting.
+
+- [`hte_test_conditional()`](https://unbiased.co.in/dScoreTest/reference/hte_test_conditional.md)
+  : Test for detecting heterogeneity in the conditional treatment effect
+  (CATE)
+- [`fit_CATE()`](https://unbiased.co.in/dScoreTest/reference/fit_CATE.md)
+  : Fit the conditional treatment effect (CATE) function
+- [`predict(`*`<CATE>`*`)`](https://unbiased.co.in/dScoreTest/reference/predict.CATE.md)
+  : Predict from a fitted CATE model
 
 ## Package
 

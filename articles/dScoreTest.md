@@ -56,7 +56,7 @@ fit <- lm(y ~ x1 + x2, data = dat)
 gof_test(fit)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 300, two-way split: hunt = 150, debias & test = 150
 #> 
 #> T = -1.3137, p-value = 0.905519
@@ -74,7 +74,7 @@ fit.mis <- lm(y2 ~ x1 + x2, data = dat)
 gof_test(fit.mis)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 300, two-way split: hunt = 150, debias & test = 150
 #> 
 #> T = 6.7450, p-value = 7.64993e-12
@@ -97,7 +97,7 @@ fit.1 <- lm(y2 ~ x1 + x1sq + x2, data = dat)   # alternative (superset)
 compare_models(fit.0, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x1sq, x2.
-#> (hunt.style = optimal, hunt.method = glm)
+#> (hunt.style = optimal, hunt.method = glm, debias.method = standard)
 #> n = 300, two-way split: hunt = 150, debias & test = 150
 #> 
 #> T = 5.3831, p-value = 3.65976e-08

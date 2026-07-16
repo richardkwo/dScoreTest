@@ -93,14 +93,14 @@ methods.
  compare_models(fit.0, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = glm)
+#> (hunt.style = optimal, hunt.method = glm, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = -1.7883, p-value = 0.963138
  compare_models(fit.0, fit.1, hunt.style="wls")
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2, x3.
-#> (hunt.style = wls, hunt.method = glm)
+#> (hunt.style = wls, hunt.method = glm, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 0.9726, p-value = 0.165383
@@ -119,7 +119,7 @@ methods.
  compare_models(fit.00, fit.1)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2, x3.
-#> (hunt.style = optimal, hunt.method = glm)
+#> (hunt.style = optimal, hunt.method = glm, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 2.7297, p-value = 0.00316957
@@ -129,7 +129,7 @@ methods.
  compare_models(fit.00, fit.1, hunt.style="wls")
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), x1, x2, x3.
-#> (hunt.style = wls, hunt.method = glm)
+#> (hunt.style = wls, hunt.method = glm, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
 #> T = 3.2405, p-value = 0.000596674

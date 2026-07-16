@@ -56,7 +56,7 @@ test.0 <- gof_test(fit.0)
 test.0
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 1000, two-way split: hunt = 500, debias & test = 500
 #> 
 #> T = -1.8171, p-value = 0.965397
@@ -73,7 +73,7 @@ test.1 <- gof_test(fit.1)
 test.1
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = grf)
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 1000, two-way split: hunt = 500, debias & test = 500
 #> 
 #> T = 6.6790, p-value = 1.20309e-11
@@ -93,7 +93,7 @@ fit.drop2 <- glm(y0 ~ X1 + X3, family = gaussian(link = "log"),
 compare_models(fit.drop2, fit.0)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = glm)
+#> (hunt.style = optimal, hunt.method = glm, debias.method = standard)
 #> n = 1000, two-way split: hunt = 500, debias & test = 500
 #> 
 #> T = -0.3890, p-value = 0.651351
@@ -113,7 +113,7 @@ fit.drop23 <- glm(y0 ~ X1, family = gaussian(link = "log"),
 compare_models(fit.drop23, fit.0)
 #> Debiased score test: 
 #> y ~ X, with X consists of (Intercept), X1, X2, X3.
-#> (hunt.style = optimal, hunt.method = glm)
+#> (hunt.style = optimal, hunt.method = glm, debias.method = standard)
 #> n = 1000, two-way split: hunt = 500, debias & test = 500
 #> 
 #> T = 3.3959, p-value = 0.000341982

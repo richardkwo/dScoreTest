@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dScoreTest</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/gam.html">Checking generalized additive models</a></li>
     <li><a class="dropdown-item" href="../articles/glm.html">Link function in GLM</a></li>
+    <li><a class="dropdown-item" href="../articles/hte.html">Effect modification in HIV treatment (ACTG175)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -115,7 +116,7 @@ simulation.</p>
 <span><span class="va">test.0</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), X1, X2, X3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 1000, two-way split: hunt = 500, debias &amp; test = 500</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -1.8171, p-value = 0.965397</span></span></code></pre></div>
@@ -128,7 +129,7 @@ goodness-of-fit test.</p>
 <span><span class="va">test.1</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), X1, X2, X3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = grf, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 1000, two-way split: hunt = 500, debias &amp; test = 500</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 6.6790, p-value = 1.20309e-11</span></span>
@@ -143,7 +144,7 @@ significance of predictors:</p>
 <span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.drop2</span>, <span class="va">fit.0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), X1, X2, X3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 1000, two-way split: hunt = 500, debias &amp; test = 500</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -0.3890, p-value = 0.651351</span></span>
@@ -163,7 +164,7 @@ significance of predictors:</p>
 <span><span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.drop23</span>, <span class="va">fit.0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Debiased score test: </span></span>
 <span><span class="co">#&gt; y ~ X, with X consists of (Intercept), X1, X2, X3.</span></span>
-<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm)</span></span>
+<span><span class="co">#&gt; (hunt.style = optimal, hunt.method = glm, debias.method = standard)</span></span>
 <span><span class="co">#&gt; n = 1000, two-way split: hunt = 500, debias &amp; test = 500</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 3.3959, p-value = 0.000341982</span></span>

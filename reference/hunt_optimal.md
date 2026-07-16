@@ -1,12 +1,13 @@
 # Optimal hunting
 
-Returns the hunted signal h as a function
+Hunt by fitting residuals on X optimally, trained by solving a weighted
+least squares. The hunted function is also pre-debiased.
 
 ## Usage
 
 ``` r
 hunt_optimal(
-  wls_alt_method,
+  wls_hunt_method,
   wls_method,
   score_fun,
   weight_fun,
@@ -16,21 +17,21 @@ hunt_optimal(
   X.cols = 1:ncol(X),
   binary.y = FALSE,
   trim.outlier = TRUE,
-  arg.wls_alt_method = NULL,
+  arg.wls_hunt_method = NULL,
   arg.wls_method = NULL,
   predict_fun = stats::predict,
-  predict_fun_alt = stats::predict
+  predict_fun_hunt = stats::predict
 )
 ```
 
 ## Arguments
 
-- wls_alt_method:
+- wls_hunt_method:
 
-  Function with signature `wls_alt_method(y, X, w, ...)` that returns a
+  Function with signature `wls_hunt_method(y, X, w, ...)` that returns a
   fitted *alternative model* \\\hat{g} \in \mathcal{G}\\ by minimizing
   \\\sum_i w_i (y_i - g(x_i))^2\\. The returned object must support
-  `predict_fun_alt(g, X)` for evaluation.
+  `predict_fun_hunt(g, X)` for evaluation.
 
 - wls_method:
 
@@ -78,10 +79,10 @@ hunt_optimal(
   If `TRUE`, outliers in \\\hat{h}(X)\\ will be trimmed from the hunted
   \\\hat{h}\\ using Tukey's IQR rule.
 
-- arg.wls_alt_method:
+- arg.wls_hunt_method:
 
-  Named list of additional arguments passed to `wls_alt_method` (default
-  to `NULL`).
+  Named list of additional arguments passed to `wls_hunt_method`
+  (default to `NULL`).
 
 - arg.wls_method:
 
@@ -94,15 +95,37 @@ hunt_optimal(
   vector of predictions from null-model fits. Default
   [`stats::predict`](https://rdrr.io/r/stats/predict.html).
 
-- predict_fun_alt:
+- predict_fun_hunt:
 
-  Function with signature `predict_fun_alt(fit, X)` returning a numeric
+  Function with signature `predict_fun_hunt(fit, X)` returning a numeric
   vector of predictions from the alternative-model fit. Default
   [`stats::predict`](https://rdrr.io/r/stats/predict.html).
 
 ## Value
 
-A function h with signature `h(X)`.
+An object of class `"hunt"`, a list with elements:
+
+- `hunt.fit`:
+
+  The fitted hunt model produced by `wls_hunt_method`.
+
+- `trim.bounds`:
+
+  The Tukey IQR trimming bounds, or `c(-Inf, Inf)` when
+  `trim.outlier = FALSE`.
+
+- `predict_fun_hunt`:
+
+  The prediction function for `hunt.fit`, as supplied.
+
+- `X.cols`:
+
+  The columns of `X` used for the hunt, as supplied.
+
+- `h`:
+
+  A function with signature `h(X)` giving the orthogonalised hunted
+  signal.
 
 ## Details
 
