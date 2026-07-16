@@ -42,14 +42,20 @@ Tr <- as.integer(dat$arms == 1)
 y  <- dat$cd420
 ```
 
-For each covariate $Z_i$, `hte_test_conditional(y, Tr, Z, S = i)` tests $H_0^c(\{i\})$: the treatment effect does not depend on $Z_i$, conditionally on the rest of the covariates. The test involves a random sample split, so we repeat it a number of times and combine the p-values by their harmonic mean, which controls the type-I error if the 
+For a covariate $Z_i$, we use `hte_test_conditional(y, Tr, Z, S = i)` to test 
+the conditional hypothesis $H_0(\{i\})$: the conditional treatment effect 
+$$ \tau(Z) := \mathbb{E}[Y(t=1) - Y(t=0) \mid Z]$$
+does not depend on $Z_i$, while holding all the remaining covariates fixed.
+Although here $S$ is chosen to be a singleton, the method is also applicable where 
+$S$ is a group of covariates. 
+The test involves a random sample split, so we repeat it a number of times and combine the p-values by their harmonic mean, which controls the type-I error if the 
 $\alpha$ level is small in the sense that $\text{Type-I error} / \alpha \to 1$ holds as 
 $\alpha \to 0$ under the null, even when the $p$-values are computed on the same sample and are therefore dependent. 
 
 ```{r hte-test}
 hmean <- function(p) length(p) / sum(1 / p)
 
-n.reps <- 2
+n.reps <- 10
 covariates.of.interest <- c("homo", "cd40")
 
 set.seed(42)
