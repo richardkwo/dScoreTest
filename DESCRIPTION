@@ -1,6 +1,6 @@
 Package: dScoreTest
 Title: Debiased Score Tests for Goodness of Fit and Model Comparison
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("F. Richard", "Guo", email = "ricguo@umich.edu",
            role = c("aut", "cre", "cph"),
@@ -17,7 +17,7 @@ Description: Debiased (Neyman-orthogonalized) score tests for assessing
     bias from estimating the null model, yielding a test statistic that is 
     asymptotically standard normal under the null without requiring a parametric
     form for the alternative. Methods are provided for `glm`, `lm` and 
-    `mgcv::gam` fits.
+    `mgcv::gam` fits as well as for detecting heterogeneous treatment effects.  
 URL: https://unbiased.co.in/dScoreTest, https://github.com/richardkwo/dScoreTest
 BugReports: https://github.com/richardkwo/dScoreTest/issues
 License: MIT + file LICENSE
