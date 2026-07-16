@@ -372,6 +372,7 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 #'     \item{\code{h}}{The debiased hunt function \eqn{\hat{h} - \hat{m}_{\hat{h}}}
 #'     with signature \code{h(X)}.}
 #'   }
+#' @keywords internal
 debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
                                    predict_fun, weight_fun, 
                                    wls_method, arg.wls_method) {

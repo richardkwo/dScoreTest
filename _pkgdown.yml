@@ -25,12 +25,21 @@ reference:
   - print.dScoreTest
   - plot.dScoreTest
   - summary.dScoreTest
+  - score_fun
+  - weight_fun
+  - debias_standard
 - title: Hunt algorithms
   desc: Routines that hunt for a direction of misspecification.
   contents:
   - hunt_optimal
   - hunt_wls
   - hunt_vanilla
+- title: Heterogeneous treatment effects
+  desc: Testing for effect modification in a binary-treatment setting.
+  contents:
+  - hte_test_conditional
+  - fit_CATE
+  - predict.CATE
 - title: Package
   contents:
   - dScoreTest-package

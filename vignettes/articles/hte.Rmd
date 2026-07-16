@@ -42,7 +42,9 @@ Tr <- as.integer(dat$arms == 1)
 y  <- dat$cd420
 ```
 
-For each covariate $Z_i$, `hte_test_conditional(y, Tr, Z, S = i)` tests $H_0^c(\{i\})$: the treatment effect does not depend on $Z_i$, conditionally on the rest of the covariates. The test involves a random sample split, so we repeat it a number of times and combine the p-values by their harmonic mean, which controls the type-I error at (approximately) twice the nominal level (Wilson, 2019) while being robust to the choice of any single split.
+For each covariate $Z_i$, `hte_test_conditional(y, Tr, Z, S = i)` tests $H_0^c(\{i\})$: the treatment effect does not depend on $Z_i$, conditionally on the rest of the covariates. The test involves a random sample split, so we repeat it a number of times and combine the p-values by their harmonic mean, which controls the type-I error if the 
+$\alpha$ level is small in the sense that $\text{Type-I error} / \alpha \to 1$ holds as 
+$\alpha \to 0$ under the null, even when the $p$-values are computed on the same sample and are therefore dependent. 
 
 ```{r hte-test}
 hmean <- function(p) length(p) / sum(1 / p)
