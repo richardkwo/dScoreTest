@@ -18,7 +18,8 @@ debias_hte_conditional(
   predict_fun,
   weight_fun,
   wls_method,
-  arg.wls_method
+  arg.wls_method,
+  randomized = FALSE
 )
 ```
 
@@ -40,6 +41,15 @@ debias_hte_conditional(
   [`dScoreTest()`](https://unbiased.co.in/dScoreTest/reference/dScoreTest.md)
   for details. Argument `arg.wls_method` must contain field `S` that
   defines the model space.
+
+- randomized:
+
+  If `FALSE` (default), the propensity \\e(Z) = \mathbb{E}\[T \mid Z\]\\
+  is estimated with
+  [`grf::probability_forest`](https://rdrr.io/pkg/grf/man/probability_forest.html).
+  If `TRUE`, `T` is assumed randomized (independent of `Z`), so \\e(Z)\\
+  is taken to be the constant `mean(T)` on the debiasing sample, fitted
+  upfront without cross-fitting.
 
 ## Value
 

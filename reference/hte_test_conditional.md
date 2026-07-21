@@ -22,7 +22,8 @@ hte_test_conditional(
   trim.outlier.hunt = TRUE,
   splits = c(0.5, 0.5),
   arg.hunt_grf = list(honesty = FALSE, tune.parameters = "all"),
-  verbose = FALSE
+  verbose = FALSE,
+  randomized = FALSE
 )
 ```
 
@@ -72,6 +73,17 @@ hte_test_conditional(
   Arguments passed to
   [`grf::regression_forest()`](https://rdrr.io/pkg/grf/man/regression_forest.html)
   for hunting.
+
+- randomized:
+
+  If `FALSE` (default), the propensity \\e(Z) = \mathbb{E}\[T \mid Z\]\\
+  used by
+  [`fit_CATE`](https://unbiased.co.in/dScoreTest/reference/fit_CATE.md)
+  and by the debiasing step is estimated with
+  [`grf::probability_forest`](https://rdrr.io/pkg/grf/man/probability_forest.html).
+  If `TRUE`, `T` is assumed randomized (independent of `Z`), so \\e(Z)\\
+  is taken to be the constant `mean(T)`, fitted upfront without
+  cross-fitting.
 
 ## Value
 

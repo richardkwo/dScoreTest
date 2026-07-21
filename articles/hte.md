@@ -76,7 +76,7 @@ rownames(results) <- NULL
 results
 #>   covariate               label n.reps harmonic.p
 #> 1      homo Homosexual activity     10 0.02206674
-#> 2      cd40                 CD4     10 0.02553153
+#> 2      cd40                 CD4     10 0.02535719
 ```
 
 Both covariates come back with harmonic p-values below the conventional

@@ -54,7 +54,14 @@ $$\mathbb{E}[Y|T,Z] = \mu_0(Z) + T \cdot \tau(Z), \quad \mu_0(Z) := \mathbb{E}[Y
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_CATE</span><span class="op">(</span><span class="va">y</span>, <span class="va">X</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span>, S <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span>, folds.crossfit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_CATE</span><span class="op">(</span></span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">X</span>,</span>
+<span>  w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  S <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  folds.crossfit <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  randomized <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,6 +95,15 @@ CATE is unrestricted.</p></dd>
 <dt id="arg-folds-crossfit">folds.crossfit<a class="anchor" aria-label="anchor" href="#arg-folds-crossfit"></a></dt>
 <dd><p>An integer for the number of folds in cross fitting
 using the R-loss to estimate CATE. When it is 1, no cross fitting is used.</p></dd>
+
+
+<dt id="arg-randomized">randomized<a class="anchor" aria-label="anchor" href="#arg-randomized"></a></dt>
+<dd><p>If <code>FALSE</code> (default), the propensity \(e(Z) =
+     \mathbb{E}[T \mid Z]\) is estimated by a cross-fitted
+<code><a href="https://rdrr.io/pkg/grf/man/probability_forest.html" class="external-link">grf::probability_forest</a></code>. If <code>TRUE</code>, \(T\) is assumed to
+be randomized (independent of <code>Z</code>), so \(e(Z)\) is taken to be
+the constant <code>mean(T)</code>, fitted upfront on the full sample without
+cross-fitting.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -8,7 +8,14 @@ fitting to estimate \$\$\mathbb{E}\[Y\|T,Z\] = \mu_0(Z) + T \cdot
 ## Usage
 
 ``` r
-fit_CATE(y, X, w = rep(1, nrow(X)), S = 1:(ncol(X) - 1), folds.crossfit = 5)
+fit_CATE(
+  y,
+  X,
+  w = rep(1, nrow(X)),
+  S = 1:(ncol(X) - 1),
+  folds.crossfit = 5,
+  randomized = FALSE
+)
 ```
 
 ## Arguments
@@ -41,6 +48,15 @@ fit_CATE(y, X, w = rep(1, nrow(X)), S = 1:(ncol(X) - 1), folds.crossfit = 5)
 
   An integer for the number of folds in cross fitting using the R-loss
   to estimate CATE. When it is 1, no cross fitting is used.
+
+- randomized:
+
+  If `FALSE` (default), the propensity \\e(Z) = \mathbb{E}\[T \mid Z\]\\
+  is estimated by a cross-fitted
+  [`grf::probability_forest`](https://rdrr.io/pkg/grf/man/probability_forest.html).
+  If `TRUE`, \\T\\ is assumed to be randomized (independent of `Z`), so
+  \\e(Z)\\ is taken to be the constant `mean(T)`, fitted upfront on the
+  full sample without cross-fitting.
 
 ## Value
 

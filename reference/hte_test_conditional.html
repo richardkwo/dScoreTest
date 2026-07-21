@@ -73,7 +73,8 @@ has no further effect modification while holding \(Z_{S^c}\) fixed.</p>
 <span>  trim.outlier.hunt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  splits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>  arg.hunt_grf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>honesty <span class="op">=</span> <span class="cn">FALSE</span>, tune.parameters <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  randomized <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -120,6 +121,15 @@ model fitted separately for the treated and control arms (T-learner).</p></dd>
 <dt id="arg-arg-hunt-grf">arg.hunt_grf<a class="anchor" aria-label="anchor" href="#arg-arg-hunt-grf"></a></dt>
 <dd><p>Arguments passed to <code><a href="https://rdrr.io/pkg/grf/man/regression_forest.html" class="external-link">grf::regression_forest()</a></code>
 for hunting.</p></dd>
+
+
+<dt id="arg-randomized">randomized<a class="anchor" aria-label="anchor" href="#arg-randomized"></a></dt>
+<dd><p>If <code>FALSE</code> (default), the propensity
+\(e(Z) = \mathbb{E}[T \mid Z]\) used by <code><a href="fit_CATE.html">fit_CATE</a></code> and by
+the debiasing step is estimated with <code><a href="https://rdrr.io/pkg/grf/man/probability_forest.html" class="external-link">grf::probability_forest</a></code>. If
+<code>TRUE</code>, <code>T</code> is assumed randomized (independent of <code>Z</code>),
+so \(e(Z)\) is taken to be the constant <code>mean(T)</code>, fitted upfront
+without cross-fitting.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -67,7 +67,8 @@ This function returns the debiased hunt function \(\hat{h} - \hat{m}_{\hat{h}}\)
 <span>  <span class="va">predict_fun</span>,</span>
 <span>  <span class="va">weight_fun</span>,</span>
 <span>  <span class="va">wls_method</span>,</span>
-<span>  <span class="va">arg.wls_method</span></span>
+<span>  <span class="va">arg.wls_method</span>,</span>
+<span>  randomized <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -84,6 +85,15 @@ This function returns the debiased hunt function \(\hat{h} - \hat{m}_{\hat{h}}\)
 <dt id="arg-x-debias-fit-debias-predict-fun-weight-fun-wls-method-arg-wls-method">X.debias, fit.debias, predict_fun, weight_fun, wls_method, arg.wls_method<a class="anchor" aria-label="anchor" href="#arg-x-debias-fit-debias-predict-fun-weight-fun-wls-method-arg-wls-method"></a></dt>
 <dd><p>See <code><a href="dScoreTest.html">dScoreTest()</a></code> for details.
 Argument <code>arg.wls_method</code> must contain field <code>S</code> that defines the model space.</p></dd>
+
+
+<dt id="arg-randomized">randomized<a class="anchor" aria-label="anchor" href="#arg-randomized"></a></dt>
+<dd><p>If <code>FALSE</code> (default), the propensity
+\(e(Z) = \mathbb{E}[T \mid Z]\) is estimated with
+<code><a href="https://rdrr.io/pkg/grf/man/probability_forest.html" class="external-link">grf::probability_forest</a></code>. If <code>TRUE</code>, <code>T</code> is assumed
+randomized (independent of <code>Z</code>), so \(e(Z)\) is taken to be
+the constant <code>mean(T)</code> on the debiasing sample, fitted upfront
+without cross-fitting.</p></dd>
 
 </dl></div>
     <div class="section level2">
