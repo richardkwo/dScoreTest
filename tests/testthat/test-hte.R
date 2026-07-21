@@ -47,3 +47,40 @@ test_that("hte_test_conditional rejects strong heterogeneity (S = 1:p)", {
                                folds.crossfit = 2)
     expect_lt(tt$p.val, 0.05)
 })
+
+test_that("fit_CATE with randomized = TRUE runs and skips the propensity forest", {
+    skip_on_cran()
+    d <- .hte_data()
+    f <- fit_CATE(d$y, d$X, S = c(2, 3), folds.crossfit = 2, randomized = TRUE)
+    expect_s3_class(f, "CATE")
+    expect_named(f, c("control_mean_fun", "CATE_fun", "S", "p"))
+    yhat <- predict(f, d$X)
+    expect_length(yhat, nrow(d$X))
+    expect_true(all(is.finite(yhat)))
+    # S = full set still gives a constant CATE under randomized = TRUE
+    f0 <- fit_CATE(d$y, d$X, S = 1:3, folds.crossfit = 2, randomized = TRUE)
+    expect_length(unique(f0$CATE_fun(d$Z)), 1)
+})
+
+test_that("hte_test_conditional runs for every hunt style with randomized = TRUE", {
+    skip_on_cran()
+    d <- .hte_data(n = 180, p = 3)
+    for (hs in c("optimal", "wls", "vanilla")) {
+        tt <- hte_test_conditional(d$y, d$Tr, d$Z, S = 1:3, hunt.style = hs,
+                                   folds.crossfit = 2, randomized = TRUE)
+        expect_s3_class(tt, "dScoreTest")
+        expect_true(is.finite(tt$p.val) && tt$p.val >= 0 && tt$p.val <= 1)
+    }
+})
+
+test_that("hte_test_conditional with randomized = TRUE rejects strong heterogeneity (S = 1:p)", {
+    skip_on_cran()
+    set.seed(42)
+    n <- 400; p <- 2
+    Z  <- matrix(rnorm(n * p), n, p)
+    Tr <- rbinom(n, 1, 0.5)                            # genuinely randomized
+    y  <- Z[, 2] + Tr * (3 * Z[, 1]) + rnorm(n) * 0.5  # strong CATE heterogeneity
+    tt <- hte_test_conditional(y, Tr, Z, S = 1:p, hunt.style = "optimal",
+                               folds.crossfit = 2, randomized = TRUE)
+    expect_lt(tt$p.val, 0.05)
+})

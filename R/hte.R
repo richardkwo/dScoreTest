@@ -19,20 +19,27 @@
 #'      CATE is unrestricted. 
 #' @param folds.crossfit An integer for the number of folds in cross fitting
 #'      using the R-loss to estimate CATE. When it is 1, no cross fitting is used.
-#' 
-#' @return An object of class \code{"CATE"}: 
+#' @param randomized If \code{FALSE} (default), the propensity \eqn{e(Z) =
+#'      \mathbb{E}[T \mid Z]} is estimated by a cross-fitted
+#'      \code{grf::probability_forest}. If \code{TRUE}, \eqn{T} is assumed to
+#'      be randomized (independent of \code{Z}), so \eqn{e(Z)} is taken to be
+#'      the constant \code{mean(T)}, fitted upfront on the full sample without
+#'      cross-fitting.
+#'
+#' @return An object of class \code{"CATE"}:
 #'      \describe{
 #'      \item{\code{control_mean_fun}}{\eqn{\mu_0(Z) = \mathbb{E}[Y | T=0, Z]}}
-#'      \item{\code{CATE_fun}}{\eqn{\tau(Z) = \mathbb{E}[Y | T=1, Z] - \mathbb{E}[Y | T=0, Z]}, 
+#'      \item{\code{CATE_fun}}{\eqn{\tau(Z) = \mathbb{E}[Y | T=1, Z] - \mathbb{E}[Y | T=0, Z]},
 #'      which only depends on \eqn{Z} through \eqn{Z_{S^c}}. }
 #'      \item{\code{S}}{\code{S} as specified.}
 #'      \item{\code{p}}{Number of covariates, which equals \code{ncol(Z)}.}
 #'      }
-#'      
+#'
 #' @export
-fit_CATE <- function(y, X, w=rep(1, nrow(X)), 
-                     S=1:(ncol(X)-1), 
-                     folds.crossfit=5) {
+fit_CATE <- function(y, X, w=rep(1, nrow(X)),
+                     S=1:(ncol(X)-1),
+                     folds.crossfit=5,
+                     randomized=FALSE) {
     # check input
     X <- as.matrix(X)
     p <- ncol(X) - 1
@@ -69,6 +76,12 @@ fit_CATE <- function(y, X, w=rep(1, nrow(X)),
     # forest). With K = folds.crossfit folds, each observation is residualized
     # by nuisances trained on the other folds; when folds.crossfit == 1 the
     # nuisances are fit and evaluated in-sample (no cross-fitting).
+    #
+    # When randomized = TRUE, T is assumed independent of Z, so e(Z) is just
+    # the constant mean(T) -- estimated once upfront on the full sample
+    # (no covariates involved, so no cross-fitting is needed for it) rather
+    # than refit inside the fold loop.
+    e.const <- if (randomized) mean(Tr) else NA_real_
     fold.id <- if (folds.crossfit == 1) {
         rep(1L, n)
     } else {
@@ -87,11 +100,15 @@ fit_CATE <- function(y, X, w=rep(1, nrow(X)),
         m.fit <- grf::regression_forest(Z[train, , drop = FALSE], y[train],
                                         honesty = FALSE,
                                         tune.parameters = "all")
-        e.fit <- grf::probability_forest(Z[train, , drop = FALSE],
-                                         as.factor(Tr[train]), 
-                                         honesty=FALSE)
         m.pred <- stats::predict(m.fit, Z[test, , drop = FALSE])$predictions
-        e.pred <- stats::predict(e.fit, Z[test, , drop = FALSE])$predictions[, "1"]
+        e.pred <- if (randomized) {
+            rep(e.const, length(test))
+        } else {
+            e.fit <- grf::probability_forest(Z[train, , drop = FALSE],
+                                             as.factor(Tr[train]),
+                                             honesty=FALSE)
+            stats::predict(e.fit, Z[test, , drop = FALSE])$predictions[, "1"]
+        }
         Y.tilde[test] <- y[test] - m.pred
         T.tilde[test] <- Tr[test] - e.pred
     }
@@ -231,8 +248,14 @@ weight_fun.CATE <- function(fit, X, ...) {
 #'   \code{\link{fit_CATE}} when estimating the CATE. Default 5.
 #' @param trim.outlier.hunt,splits,verbose Passed through to
 #'   \code{\link{dScoreTest}}; see there for details.
-#' @param arg.hunt_grf Arguments passed to [grf::regression_forest()] 
-#'   for hunting. 
+#' @param arg.hunt_grf Arguments passed to [grf::regression_forest()]
+#'   for hunting.
+#' @param randomized If \code{FALSE} (default), the propensity
+#'   \eqn{e(Z) = \mathbb{E}[T \mid Z]} used by \code{\link{fit_CATE}} and by
+#'   the debiasing step is estimated with \code{grf::probability_forest}. If
+#'   \code{TRUE}, \code{T} is assumed randomized (independent of \code{Z}),
+#'   so \eqn{e(Z)} is taken to be the constant \code{mean(T)}, fitted upfront
+#'   without cross-fitting.
 #'
 #' @inherit dScoreTest return
 #'
@@ -257,7 +280,8 @@ hte_test_conditional <- function(y, Tr, Z, S=1:ncol(Z),
                                  trim.outlier.hunt = TRUE,
                                  splits = c(0.5, 0.5),
                                  arg.hunt_grf = list(honesty=FALSE, tune.parameters="all"),
-                                 verbose = FALSE) {
+                                 verbose = FALSE,
+                                 randomized = FALSE) {
     hunt.style <- match.arg(hunt.style, c("optimal", "wls", "vanilla"))
     stopifnot("Tr must be binary" = setequal(unique(Tr), c(0,1)))
     # assemble the design X = [T, Z]
@@ -298,6 +322,16 @@ hte_test_conditional <- function(y, Tr, Z, S=1:ncol(Z),
         hunt_fun <- wls_hunt_method_grf_hte_conditional
     }
 
+    # debias_hte_conditional() also needs `randomized`, but the engine always
+    # calls debias_fun with a fixed argument list (no room for extra args), so
+    # it is captured here via a closure instead.
+    debias_fun <- function(h.hat, X.debias, fit.debias, predict_fun,
+                           weight_fun, wls_method, arg.wls_method) {
+        debias_hte_conditional(h.hat, X.debias, fit.debias, predict_fun,
+                               weight_fun, wls_method, arg.wls_method,
+                               randomized = randomized)
+    }
+
     dScoreTest(y, X,
                score_fun = score_fun.CATE,
                weight_fun = weight_fun.CATE,
@@ -306,12 +340,12 @@ hte_test_conditional <- function(y, Tr, Z, S=1:ncol(Z),
                hunt.style = hunt.style,
                hunt.method = "grf.hte",
                hunt_fun = hunt_fun,
-               debias.method= "hte.conditional", 
-               debias_fun = debias_hte_conditional,
+               debias.method= "hte.conditional",
+               debias_fun = debias_fun,
                trim.outlier.hunt = trim.outlier.hunt,
                splits = splits,
-               arg.fit_method = list(S = S, folds.crossfit=folds.crossfit),
-               arg.wls_method = list(S = S, folds.crossfit=folds.crossfit),
+               arg.fit_method = list(S = S, folds.crossfit=folds.crossfit, randomized=randomized),
+               arg.wls_method = list(S = S, folds.crossfit=folds.crossfit, randomized=randomized),
                arg.hunt_fun = arg.hunt_grf,
                predict_fun = predict.CATE,
                predict_fun_hunt = predict_fun_hunt_grf_hte_conditional,
@@ -364,6 +398,12 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 #'      \eqn{X=[t, Z]}.
 #' @param X.debias,fit.debias,predict_fun,weight_fun,wls_method,arg.wls_method See [dScoreTest()] for details.
 #'      Argument \code{arg.wls_method} must contain field \code{S} that defines the model space.
+#' @param randomized If \code{FALSE} (default), the propensity
+#'      \eqn{e(Z) = \mathbb{E}[T \mid Z]} is estimated with
+#'      \code{grf::probability_forest}. If \code{TRUE}, \code{T} is assumed
+#'      randomized (independent of \code{Z}), so \eqn{e(Z)} is taken to be
+#'      the constant \code{mean(T)} on the debiasing sample, fitted upfront
+#'      without cross-fitting.
 #'
 #' @return A list with elements:
 #'   \describe{
@@ -374,20 +414,31 @@ fit_hunt_method_grf_hte_conditional <- function(y, X, ...) {
 #'   }
 #' @keywords internal
 debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
-                                   predict_fun, weight_fun, 
-                                   wls_method, arg.wls_method) {
+                                   predict_fun, weight_fun,
+                                   wls_method, arg.wls_method,
+                                   randomized = FALSE) {
     # debias the CATE, fit with constant weight (square loss)
     Tr.debias <- X.debias[, 1]
     Z.debias  <- X.debias[, -1, drop = FALSE]
     n.debias <- nrow(X.debias)
     p <- ncol(Z.debias)
     S <- arg.wls_method$S
-    stopifnot("Must have both T=1 and T=0 in the debiasing sample" = 
+    stopifnot("Must have both T=1 and T=0 in the debiasing sample" =
                   (sum(Tr.debias) > 0 && sum(Tr.debias) < n.debias))
-    
-    e.fit <- grf::probability_forest(Z.debias, as.factor(Tr.debias),
-                                     honesty=FALSE)
-    e.pred <- stats::predict(e.fit, Z.debias)$predictions[, "1"]
+
+    # When randomized = TRUE, e(Z) is the constant mean(T) (no covariates
+    # needed), fitted once upfront rather than via probability_forest.
+    e.const <- if (randomized) mean(Tr.debias) else NA_real_
+    e.fit <- if (randomized) {
+        NULL
+    } else {
+        grf::probability_forest(Z.debias, as.factor(Tr.debias), honesty=FALSE)
+    }
+    e.pred <- if (randomized) {
+        rep(e.const, n.debias)
+    } else {
+        stats::predict(e.fit, Z.debias)$predictions[, "1"]
+    }
     # fit m_{\Delta} (i.e., CATE) on Z_{Sc}
     pred.h.delta <- h.hat$h(cbind(rep(1, n.debias), Z.debias)) - 
         h.hat$h(cbind(rep(0, n.debias), Z.debias))
@@ -418,7 +469,11 @@ debias_hte_conditional <- function(h.hat, X.debias, fit.debias,
         n.new <- nrow(X.new)
         pred.h.CATE.new <- h.hat$h(cbind(rep(1, n.new), Z.new)) - h.hat$h(cbind(rep(0, n.new), Z.new))
         pred.m.h.CATE.new <- m.CATE.fit$CATE_fun(Z.new)
-        pred.e.new <- stats::predict(e.fit, Z.new)$predictions[, "1"]
+        pred.e.new <- if (randomized) {
+            rep(e.const, n.new)
+        } else {
+            stats::predict(e.fit, Z.new)$predictions[, "1"]
+        }
         return((Tr.new - pred.e.new) * (pred.h.CATE.new - pred.m.h.CATE.new))
     }
     return(list(m.h.fit = m.CATE.fit, h=h))
