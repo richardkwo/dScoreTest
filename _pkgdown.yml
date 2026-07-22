@@ -1,6 +1,7 @@
 url: https://unbiased.co.in/dScoreTest
 template:
   bootstrap: 5
+  math-rendering: mathjax
 
 reference:
 - title: Goodness-of-fit tests
