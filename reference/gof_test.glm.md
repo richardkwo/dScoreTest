@@ -137,5 +137,5 @@ methods.
 #> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
 #> n = 500, two-way split: hunt = 250, debias & test = 250
 #> 
-#> T = 9.0599, p-value = 6.53019e-20
+#> T = 11.2969, p-value = 6.79367e-30
 ```

@@ -11,7 +11,13 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -84,13 +90,10 @@ article (not run by <code>R CMD check</code>).</p>
 <h2 id="simulation-example">Simulation example<a class="anchor" aria-label="anchor" href="#simulation-example"></a>
 </h2>
 <p>We simulate from the four-term additive truth in
-<code>mgcv::gamSim(eg = 1)</code>,
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>f</mi><mn>0</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>f</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>f</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>f</mi><mn>3</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>3</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>ε</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">y = f_0(x_0) + f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon,</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>3</mn></msub><mo>≡</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f_3 \equiv 0</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>0</mn></msub><mo>,</mo><msub><mi>f</mi><mn>1</mn></msub><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">f_0, f_1, f_2</annotation></semantics></math>
-are nonlinear. The covariates are independent uniforms.</p>
+<code>mgcv::gamSim(eg = 1)</code>, <span class="math display">\[y =
+f_0(x_0) + f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon,\]</span> where
+<span class="math inline">\(f_3 \equiv 0\)</span> and <span class="math inline">\(f_0, f_1, f_2\)</span> are nonlinear. The
+covariates are independent uniforms.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/gamSim.html" class="external-link">gamSim</a></span><span class="op">(</span>eg <span class="op">=</span> <span class="fl">1</span>, n <span class="op">=</span> <span class="fl">400</span>, dist <span class="op">=</span> <span class="st">"normal"</span>, scale <span class="op">=</span> <span class="fl">2</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -109,13 +112,10 @@ forest. A correctly specified additive smooth model is not rejected:</p>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 0.6274, p-value = 0.265214</span></span></code></pre></div>
-<p>Formally, the above tests that the regression function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>3</mn></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">E[Y \mid X_0,X_1,X_2,X_3]</annotation></semantics></math>
-is an additive function of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>3</mn></msub></mrow><annotation encoding="application/x-tex">X_0,X_1,X_2,X_3</annotation></semantics></math>.
-In contrast, if we specify that the regression function is a <em>linear
-function</em> of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>3</mn></msub></mrow><annotation encoding="application/x-tex">X_0,X_1,X_2,X_3</annotation></semantics></math>,
+<p>Formally, the above tests that the regression function <span class="math inline">\(E[Y \mid X_0,X_1,X_2,X_3]\)</span> is an additive
+function of <span class="math inline">\(X_0,X_1,X_2,X_3\)</span>. In
+contrast, if we specify that the regression function is a <em>linear
+function</em> of <span class="math inline">\(X_0,X_1,X_2,X_3\)</span>,
 the model is rejected.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit.linear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x0</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
@@ -126,9 +126,8 @@ the model is rejected.</p>
 <span><span class="co">#&gt; n = 400, two-way split: hunt = 200, debias &amp; test = 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = 9.7238, p-value = 1.19302e-22</span></span></code></pre></div>
-<p>In fact, since
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f_3=0</annotation></semantics></math>
-in the data-generating mechanism, an additive regression model without
+<p>In fact, since <span class="math inline">\(f_3=0\)</span> in the
+data-generating mechanism, an additive regression model without
 <code>s(x3)</code> is still well-specified.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit.drop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">gam</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
@@ -152,13 +151,11 @@ illustrated below.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; T = -0.4014, p-value = 0.655919</span></span></code></pre></div>
 <p>Since the model is only fitted on <code>x0</code> and
-<code>x1</code>, the above tests
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">]</mo><mo>=</mo><msub><mi>f</mi><mn>0</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>f</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex"> E[Y \mid X_0, X_1] = f_0(x_0) + f_1(x_1) </annotation></semantics></math>
-as opposed to
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><msub><mi>X</mi><mn>0</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>3</mn></msub><mo stretchy="false" form="postfix">]</mo><mo>=</mo><msub><mi>f</mi><mn>0</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>f</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex"> E[Y \mid X_0, X_1, X_2, X_3] = f_0(x_0) + f_1(x_1), </annotation></semantics></math>
-simply because <code>gof_test</code> does not see predictors
-<code>x_1</code> and <code>x_2</code> which do not appear in the model’s
-formula (you can see this from the printout
+<code>x1</code>, the above tests <span class="math display">\[ E[Y \mid
+X_0, X_1] = f_0(x_0) + f_1(x_1) \]</span> as opposed to <span class="math display">\[ E[Y \mid X_0, X_1, X_2, X_3] = f_0(x_0) +
+f_1(x_1), \]</span> simply because <code>gof_test</code> does not see
+predictors <code>x_1</code> and <code>x_2</code> which do not appear in
+the model’s formula (you can see this from the printout
 <code>y ~ X, with X consists of x0, x1</code>). To ask whether one or
 more <em>omitted</em> covariates carries signal, use
 <code><a href="../reference/compare_models.html">compare_models()</a></code>, which gives the hunt access to the
@@ -170,10 +167,8 @@ alternative’s covariates.</p>
 <p><code><a href="../reference/compare_models.html">compare_models()</a></code> tests a null model against a larger
 alternative model and detects signal living in the alternative’s extra
 terms. Similar to ANOVA, this can be used to test significance of one or
-more predictors. For example, we can test the significance of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mn>2</mn></msub><annotation encoding="application/x-tex">f_2</annotation></semantics></math>
-by fitting a model without <code>s(x2)</code> and comparing it against
-the full model.</p>
+more predictors. For example, we can test the significance of <span class="math inline">\(f_2\)</span> by fitting a model without
+<code>s(x2)</code> and comparing it against the full model.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit.full</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">gam</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.drop23</span>, <span class="va">fit.full</span><span class="op">)</span></span>
@@ -440,7 +435,7 @@ between splits (cf. the harmonic-mean p-value of Wilson, 2019):</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">pvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fu"><a href="../reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="va">fit.0</span>, <span class="va">fit.1</span><span class="op">)</span><span class="op">$</span><span class="va">p.val</span><span class="op">)</span></span>
 <span><span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">pvals</span><span class="op">)</span>   <span class="co"># harmonic-mean p-value</span></span>
-<span><span class="co">#&gt; [1] 0.01680784</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.01681002</span></span></code></pre></div>
 <p>The aggregated p-value seems to agree with the mgcv’s result.</p>
 </div>
 </div>

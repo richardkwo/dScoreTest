@@ -6,17 +6,13 @@ library(dScoreTest)
 ```
 
 The package can be used to check and compare (generalized) linear models
-with a non-canonical link function. Based on covariates
-$`X_1, X_2, X_3`$, suppose the response is generated as
-``` math
- Y = 5 \exp(X_1 + X_3) + \varepsilon, \quad \mathbb{E}[\varepsilon \mid X] = 0. 
-```
-In other words, the regression model is specified as
-``` math
- \log \mathbb{E}[Y \mid X] = \alpha + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3.
-```
-To fit this generalized linear model, we must use the *non-canonical
-link* `family = gaussian(link = "log")`. Here is a simple simulation.
+with a non-canonical link function. Based on covariates \\X_1, X_2,
+X_3\\, suppose the response is generated as \\ Y = 5 \exp(X_1 + X_3) +
+\varepsilon, \quad \mathbb{E}\[\varepsilon \mid X\] = 0. \\ In other
+words, the regression model is specified as \\ \log \mathbb{E}\[Y \mid
+X\] = \alpha + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3.\\ To fit this
+generalized linear model, we must use the *non-canonical link*
+`family = gaussian(link = "log")`. Here is a simple simulation.
 
 ``` r
 

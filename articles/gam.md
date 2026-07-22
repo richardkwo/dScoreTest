@@ -18,11 +18,9 @@ run by `R CMD check`).
 ## Simulation example
 
 We simulate from the four-term additive truth in `mgcv::gamSim(eg = 1)`,
-``` math
-y = f_0(x_0) + f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon,
-```
-where $`f_3 \equiv 0`$ and $`f_0, f_1, f_2`$ are nonlinear. The
-covariates are independent uniforms.
+\\y = f_0(x_0) + f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon,\\ where
+\\f_3 \equiv 0\\ and \\f_0, f_1, f_2\\ are nonlinear. The covariates are
+independent uniforms.
 
 ``` r
 
@@ -49,11 +47,10 @@ gof_test(fit.smooth)
 #> T = 0.6274, p-value = 0.265214
 ```
 
-Formally, the above tests that the regression function
-$`E[Y \mid X_0,X_1,X_2,X_3]`$ is an additive function of
-$`X_0,X_1,X_2,X_3`$. In contrast, if we specify that the regression
-function is a *linear function* of $`X_0,X_1,X_2,X_3`$, the model is
-rejected.
+Formally, the above tests that the regression function \\E\[Y \mid
+X_0,X_1,X_2,X_3\]\\ is an additive function of \\X_0,X_1,X_2,X_3\\. In
+contrast, if we specify that the regression function is a *linear
+function* of \\X_0,X_1,X_2,X_3\\, the model is rejected.
 
 ``` r
 
@@ -67,7 +64,7 @@ gof_test(fit.linear)
 #> T = 9.7238, p-value = 1.19302e-22
 ```
 
-In fact, since $`f_3=0`$ in the data-generating mechanism, an additive
+In fact, since \\f_3=0\\ in the data-generating mechanism, an additive
 regression model without `s(x3)` is still well-specified.
 
 ``` r
@@ -97,16 +94,11 @@ gof_test(fit.drop23)
 #> T = -0.4014, p-value = 0.655919
 ```
 
-Since the model is only fitted on `x0` and `x1`, the above tests
-``` math
- E[Y \mid X_0, X_1] = f_0(x_0) + f_1(x_1) 
-```
-as opposed to
-``` math
- E[Y \mid X_0, X_1, X_2, X_3] = f_0(x_0) + f_1(x_1), 
-```
-simply because `gof_test` does not see predictors `x_1` and `x_2` which
-do not appear in the model’s formula (you can see this from the printout
+Since the model is only fitted on `x0` and `x1`, the above tests \\ E\[Y
+\mid X_0, X_1\] = f_0(x_0) + f_1(x_1) \\ as opposed to \\ E\[Y \mid X_0,
+X_1, X_2, X_3\] = f_0(x_0) + f_1(x_1), \\ simply because `gof_test` does
+not see predictors `x_1` and `x_2` which do not appear in the model’s
+formula (you can see this from the printout
 `y ~ X, with X consists of x0, x1`). To ask whether one or more
 *omitted* covariates carries signal, use
 [`compare_models()`](https://unbiased.co.in/dScoreTest/reference/compare_models.md),
@@ -118,7 +110,7 @@ which gives the hunt access to the alternative’s covariates.
 tests a null model against a larger alternative model and detects signal
 living in the alternative’s extra terms. Similar to ANOVA, this can be
 used to test significance of one or more predictors. For example, we can
-test the significance of $`f_2`$ by fitting a model without `s(x2)` and
+test the significance of \\f_2\\ by fitting a model without `s(x2)` and
 comparing it against the full model.
 
 ``` r
@@ -418,7 +410,7 @@ splits (cf. the harmonic-mean p-value of Wilson, 2019):
 set.seed(42)
 pvals <- replicate(200, compare_models(fit.0, fit.1)$p.val)
 1 / mean(1 / pvals)   # harmonic-mean p-value
-#> [1] 0.01680784
+#> [1] 0.01681002
 ```
 
 The aggregated p-value seems to agree with the mgcv’s result.
