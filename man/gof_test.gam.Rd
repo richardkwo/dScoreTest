@@ -105,7 +105,7 @@ response (e.g. \code{cbind(succ, fail) ~ ...}) are also not supported.
  
  # well-specified
  fit.0 <- mgcv::gam(y~s(x0)+s(x1)+s(x2)+s(x3),data=dat.0)
- test.0 <- gof_test(fit.0)
+ \donttest{test.0 <- gof_test(fit.0)}
  # f3=0, also well-specified
  \donttest{fit.1 <- mgcv::gam(y~s(x0)+s(x1)+s(x2),data=dat.0)
  test.1 <- gof_test(fit.1)

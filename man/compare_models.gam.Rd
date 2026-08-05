@@ -75,15 +75,15 @@ relevant alternative directions. Factor predictors, \code{offset()} terms,
  # test fit.0 against fit.1: well-specified (f3 = 0) and should not be rejected
  fit.0  <- mgcv::gam(y ~ s(x0) + s(x1) + s(x2), data = dat)
  fit.1  <- mgcv::gam(y ~ s(x0) + s(x1) + s(x2) + s(x3), data = dat)
- compare_models(fit.0, fit.1)
- \donttest{plot(compare_models(fit.0, fit.1))}
+ \donttest{compare_models(fit.0, fit.1)
+ plot(compare_models(fit.0, fit.1))}
  anova(fit.0, fit.1)
- 
+
  # mis-specified model: drops f2 and should be rejected
  fit.00 <- mgcv::gam(y ~ s(x0) + s(x1) + s(x3), data = dat)
- compare_models(fit.00, fit.1)
- \donttest{plot(compare_models(fit.00, fit.1))}
- \donttest{compare_models(fit.00, fit.1, hunt.style="wls")}
+ \donttest{compare_models(fit.00, fit.1)
+ plot(compare_models(fit.00, fit.1))
+ compare_models(fit.00, fit.1, hunt.style="wls")}
  anova(fit.00, fit.1)
 
 }

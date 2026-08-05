@@ -19,7 +19,7 @@ Description: Debiased (Neyman-orthogonalized) score tests for assessing
     form for the alternative. Methods are provided for 'glm', 'lm' and
     'mgcv::gam' fits as well as for detecting heterogeneous treatment effects.
     The methodology is described in Dhawan, Guo and Shah (2026)
-    <arXiv:2607.28861>.
+    <doi:10.48550/arXiv.2607.28861>.
 URL: https://unbiased.co.in/dScoreTest/, https://github.com/richardkwo/dScoreTest
 BugReports: https://github.com/richardkwo/dScoreTest/issues
 License: MIT + file LICENSE

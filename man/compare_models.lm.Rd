@@ -38,14 +38,14 @@ call is dispatched to \code{\link{compare_models.glm}}.
  fit.1 <- lm(y ~ x1 + x2 + x3,   data = dat)
  
  # test fit.0 against fit.1: should not be rejected
- compare_models(fit.0, fit.1)
+ \donttest{compare_models(fit.0, fit.1)}
  anova(fit.0, fit.1)
 
  # misspecified model: should be rejected
  fit.00 <- lm(y ~ x1 + x2, data = dat)
- compare_models(fit.00, fit.1)
- \donttest{plot(compare_models(fit.00, fit.1))}
- \donttest{compare_models(fit.00, fit.1, hunt.style="wls")}
+ \donttest{compare_models(fit.00, fit.1)
+ plot(compare_models(fit.00, fit.1))
+ compare_models(fit.00, fit.1, hunt.style="wls")}
  anova(fit.00, fit.1)
 
 }

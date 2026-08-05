@@ -37,17 +37,17 @@ Compare two models using the debiased score test
               data = dat, start = rep(1, 4))
               
  # test fit.0 against fit.1: should not be rejected
- compare_models(fit.0, fit.1)
- \donttest{compare_models(fit.0, fit.1, hunt.style="wls")}
+ \donttest{compare_models(fit.0, fit.1)
+ compare_models(fit.0, fit.1, hunt.style="wls")}
  anova(fit.0, fit.1)
- 
+
  # test a misspecified null model: should be rejected
  fit.00 <- glm(y ~ x2, family = gaussian(link = "log"),
               data = dat, start = rep(1, 2))
- compare_models(fit.00, fit.1)
- \donttest{plot(compare_models(fit.00, fit.1))}
- \donttest{compare_models(fit.00, fit.1, hunt.style="wls")}
- \donttest{plot(compare_models(fit.00, fit.1, hunt.style="wls"))}
+ \donttest{compare_models(fit.00, fit.1)
+ plot(compare_models(fit.00, fit.1))
+ compare_models(fit.00, fit.1, hunt.style="wls")
+ plot(compare_models(fit.00, fit.1, hunt.style="wls"))}
  anova(fit.00, fit.1)
 
 }
