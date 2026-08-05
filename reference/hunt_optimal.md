@@ -1,7 +1,8 @@
 # Optimal hunting
 
 Hunt by fitting residuals on X optimally, trained by solving a weighted
-least squares. The hunted function is also pre-debiased.
+least squares. The hunted function is also pre-debiased. This is the
+procedure of Section 2.2.1 of Dhawan, Guo and Shah (2026).
 
 ## Usage
 
@@ -124,7 +125,7 @@ An object of class `"hunt"`, a list with elements:
 
 - `h`:
 
-  A function with signature `h(X)` giving the orthogonalised hunted
+  A function with signature `h(X)` giving the orthogonalized hunted
   signal.
 
 ## Details
@@ -132,3 +133,9 @@ An object of class `"hunt"`, a list with elements:
 If y is binary, then set `binary.y=TRUE`. Meanwhile,
 `predict_fun(fit, X, type="response")` must output the predicted
 probabilities.
+
+## References
+
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+<https://arxiv.org/abs/2607.28861>

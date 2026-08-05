@@ -1,7 +1,7 @@
 # Weighted-least-squares hunting
 
 Hunt by fitting residuals on X, trained by solving a weighted least
-squares.
+squares. See Proposition 2 of Dhawan, Guo and Shah (2026).
 
 ## Usage
 
@@ -78,3 +78,9 @@ An object of class `"hunt"`, a list with elements:
 - `h`:
 
   A function with signature `h(X)` giving the hunted signal.
+
+## References
+
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+<https://arxiv.org/abs/2607.28861>

@@ -10,16 +10,18 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/richardkwo/dScoreTest/blob/HEAD/DESCRIPTION)
+[`inst/CITATION`](https://github.com/richardkwo/dScoreTest/blob/HEAD/inst/CITATION)
 
-Guo F, Dhawan A (2026). *dScoreTest: Debiased Score Tests for Goodness
-of Fit and Model Comparison*. R package version 0.2.0,
-<https://unbiased.co.in/dScoreTest>.
+Dhawan A, Guo FR, Shah RD (2026). “The debiased score test:
+hunt-and-test for semiparametric hypotheses.” 2607.28861,
+<https://arxiv.org/abs/2607.28861>.
 
-    @Manual{,
-      title = {dScoreTest: Debiased Score Tests for Goodness of Fit and Model Comparison},
-      author = {F. Richard Guo and Aditya Dhawan},
+    @Misc{,
+      title = {The debiased score test: hunt-and-test for semiparametric hypotheses},
+      author = {Aditya Dhawan and F. Richard Guo and Rajen D. Shah},
       year = {2026},
-      note = {R package version 0.2.0},
-      url = {https://unbiased.co.in/dScoreTest},
+      eprint = {2607.28861},
+      archiveprefix = {arXiv},
+      primaryclass = {stat.ME},
+      url = {https://arxiv.org/abs/2607.28861},
     }

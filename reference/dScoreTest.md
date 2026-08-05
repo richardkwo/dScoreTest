@@ -223,15 +223,25 @@ For most scenarios, use one of these methods instead:
   and [`mgcv::gam`](https://rdrr.io/pkg/mgcv/man/gam.html)
   ([`compare_models.gam`](https://unbiased.co.in/dScoreTest/reference/compare_models.gam.md)).
 
+- Use
+  [`hte_test_conditional`](https://unbiased.co.in/dScoreTest/reference/hte_test_conditional.md)
+  to test treatment effect heterogeneity.
+
 Use `dScoreTest` directly for full control over the score, weight, refit
 and hunt routines: this is the underlying engine that the S3 methods
 wrap.
+
+## References
+
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+<https://arxiv.org/abs/2607.28861>
 
 ## See also
 
 Useful links:
 
-- <https://unbiased.co.in/dScoreTest>
+- <https://unbiased.co.in/dScoreTest/>
 
 - <https://github.com/richardkwo/dScoreTest>
 
@@ -252,3 +262,58 @@ Useful links:
 Authors:
 
 - Aditya Dhawan <ad950@cam.ac.uk>
+
+## Examples
+
+``` r
+## An example for customizing a dScoreTest:
+## Conditional mean independence: is E[Y | X] a function of X[, 1:3] alone,
+## i.e. do X4 and X5 carry no further information once X1, X2, X3 are given?
+set.seed(1)
+n <- 500
+X <- matrix(rnorm(n * 5), n, 5)
+y     <- X[, 1] + X[, 2]^2 + sin(X[, 3]) + rnorm(n)   # null TRUE
+y.alt <- y + X[, 4] * X[, 5]                          # null FALSE
+
+## Null model class: an arbitrary function of X[, 1:3], fitted by a
+## regression forest. The fitter and predict_fun subset to those columns,
+## while the hunt still searches all five columns for a direction of
+## misspecification. Note honesty = FALSE with tuning: an underfitted null
+## model is itself misspecified, and the test then (correctly) rejects on
+## that lack of fit rather than on any dependence on X4, X5.
+fit_method <- function(y, X, ...)
+    grf::regression_forest(X[, 1:3, drop = FALSE], y,
+                           honesty = FALSE, tune.parameters = "all")
+wls_method <- function(y, X, w, ...)
+    grf::regression_forest(X[, 1:3, drop = FALSE], y, sample.weights = w,
+                           honesty = FALSE, tune.parameters = "all")
+predict_fun <- function(fit, X, ...)
+    predict(fit, X[, 1:3, drop = FALSE])$predictions
+
+## Square loss l(f, y) = (y - f)^2 / 2 gives the score l'(f, y) = f - y
+## (a negative residual) and the weight l''(f, y) = 1.
+score_fun  <- function(fit, y, X, ...) predict_fun(fit, X) - y
+weight_fun <- function(fit, X, ...) rep(1, nrow(X))
+
+# \donttest{
+## Null holds: no evidence against it.
+dScoreTest(y, X, score_fun, weight_fun, fit_method, wls_method,
+           predict_fun = predict_fun)
+#> Debiased score test: 
+#> y ~ X, with X consists of .
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
+#> n = 500, two-way split: hunt = 250, debias & test = 250
+#> 
+#> T = 0.6925, p-value = 0.244297
+
+## Null fails: the dependence on X4 and X5 is detected.
+dScoreTest(y.alt, X, score_fun, weight_fun, fit_method, wls_method,
+           predict_fun = predict_fun)
+#> Debiased score test: 
+#> y ~ X, with X consists of .
+#> (hunt.style = optimal, hunt.method = grf, debias.method = standard)
+#> n = 500, two-way split: hunt = 250, debias & test = 250
+#> 
+#> T = 7.8449, p-value = 2.16606e-15
+# }
+```

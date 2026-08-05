@@ -78,3 +78,36 @@ An object of class `"CATE"`:
 - `p`:
 
   Number of covariates, which equals `ncol(Z)`.
+
+## Examples
+
+``` r
+## A randomized trial in which the treatment effect depends on Z1 only.
+set.seed(2)
+n <- 500
+Z  <- matrix(rnorm(n * 2), n, 2, dimnames = list(NULL, c("Z1", "Z2")))
+Tr <- rbinom(n, 1, 0.5)                       # randomized treatment
+tau <- Z[, "Z1"]                              # true CATE
+y  <- Z[, "Z1"] + Z[, "Z2"] + Tr * tau + rnorm(n)
+
+# \donttest{
+## S = NULL leaves the CATE unrestricted, so it may depend on Z1 and Z2.
+fit <- fit_CATE(y, cbind(Tr, Z), S = NULL, randomized = TRUE,
+                folds.crossfit = 2)
+cor(fit$CATE_fun(Z), tau)      # close to 1: the true CATE is recovered
+#> [1] 0.9059014
+sd(fit$CATE_fun(Z))
+#> [1] 1.105731
+
+## S = 1 bars Z1 from modifying the effect. Because the true CATE depends
+## on Z1 alone, the fitted CATE then collapses to nearly a constant.
+fit0 <- fit_CATE(y, cbind(Tr, Z), S = 1, randomized = TRUE,
+                 folds.crossfit = 2)
+sd(fit0$CATE_fun(Z))           # much smaller than above
+#> [1] 0.1190038
+
+## predict() gives the fitted outcome mean mu0(Z) + T * tau(Z).
+head(predict(fit, cbind(Tr, Z)))
+#> [1] -2.7260819  0.6204713  1.6418427 -1.4231552  0.5249579  1.4561778
+# }
+```

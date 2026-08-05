@@ -72,8 +72,8 @@ results <- do.call(rbind, lapply(covariates.of.interest, function(cov) {
 rownames(results) <- NULL
 results
 #>   covariate               label n.reps harmonic.p
-#> 1      homo Homosexual activity     10 0.02219521
-#> 2      cd40                 CD4     10 0.02535719
+#> 1      homo Homosexual activity     10 0.02206659
+#> 2      cd40                 CD4     10 0.04547150
 ```
 
 Both covariates come back with harmonic p-values below the conventional

@@ -31,6 +31,12 @@ and
 [`plot`](https://unbiased.co.in/dScoreTest/reference/plot.dScoreTest.md)
 methods.
 
+## References
+
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+<https://arxiv.org/abs/2607.28861>
+
 ## See also
 
 [`gof_test.glm`](https://unbiased.co.in/dScoreTest/reference/gof_test.glm.md),

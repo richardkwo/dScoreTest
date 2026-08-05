@@ -171,7 +171,7 @@ A list of class `"dScoreTest"` with elements:
 
 - `h`:
 
-  Orthogonalised hunted direction on the test subsample.
+  Orthogonalized hunted direction on the test subsample.
 
 - `h.raw`:
 
