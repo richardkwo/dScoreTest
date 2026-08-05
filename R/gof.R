@@ -10,6 +10,11 @@
 #' @seealso \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}},
 #'   \code{\link{gof_test.gam}},
 #'   \code{\link{compare_models}}, \code{\link{dScoreTest}}
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
+#'
 #' @export
 gof_test <- function(object, ...) {
     UseMethod("gof_test")
@@ -86,12 +91,12 @@ gof_test.default <- function(object, ...) {
 #'  # log(E[y]) ~ X well-specified
 #'  y0 <- 5 * exp(X[,1] + X[,3]) + rnorm(n) * 3
 #'  fit.0 <- glm(y0 ~ X, family = gaussian(link = "log"), start=rep(1,4))
-#'  gof_test(fit.0)
+#'  \donttest{gof_test(fit.0)}
 #'  # log(E[y]) ~ X misspecified
 #'  y1 <- y0 + exp(6 * cos(X[,1]/6)^2) / sqrt(n)
 #'  fit.1 <- glm(y1 ~ X, family = gaussian(link = "log"), start=rep(1,4))
-#'  gof_test(fit.1)
-#' 
+#'  \donttest{gof_test(fit.1)}
+#'
 gof_test.glm <- function(object,
                          hunt.style = "optimal",
                          hunt.method = "grf",
@@ -193,12 +198,12 @@ gof_test.glm <- function(object,
 #'  X[,3] <- X[,3] + X[,1] + X[,2] / 2
 #'  y0 <- 1 + X %*% c(1,1,2) + rnorm(n)  # well-specified
 #'  fit.0 <- lm(y0 ~ X)
-#'  test.0 <- gof_test(fit.0)
-#'  \donttest{plot(test.0)}
+#'  \donttest{test.0 <- gof_test(fit.0)
+#'  plot(test.0)}
 #'  y1 <- y0 + cos(X[,1])  # mis-specified
 #'  fit.1 <- lm(y1 ~ X)
-#'  test.1 <- gof_test(fit.1)
-#'  \donttest{plot(test.1)}
+#'  \donttest{test.1 <- gof_test(fit.1)
+#'  plot(test.1)}
 #'  
 gof_test.lm <- function(object, ...) {
     glm_obj <- stats::glm(stats::formula(object),
@@ -231,7 +236,7 @@ gof_test.lm <- function(object, ...) {
 #'
 #' @examples
 #'  set.seed(42)
-#'  dat <- mgcv::gamSim(eg=1, n=400, dist="normal", scale=2, verbose = FALSE)
+#'  dat <- mgcv::gamSim(eg=1, n=500, dist="normal", scale=2, verbose = FALSE)
 #'  dat.0 <- dat[,1:5]
 #'  
 #'  # well-specified

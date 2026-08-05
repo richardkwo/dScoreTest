@@ -128,3 +128,15 @@ plot(res)
 ```
 
 <img src="man/figures/README-plot-1.png" alt="" width="100%" /><img src="man/figures/README-plot-2.png" alt="" width="100%" />
+
+## Citation
+
+The methodology is described in:
+
+> Dhawan, A., Guo, F. R. and Shah, R. D. (2026). *The debiased score
+> test: hunt-and-test for semiparametric hypotheses.* arXiv:2607.28861.
+> <https://arxiv.org/abs/2607.28861>
+
+``` r
+citation("dScoreTest")
+```

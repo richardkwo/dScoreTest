@@ -100,7 +100,7 @@ response (e.g. \code{cbind(succ, fail) ~ ...}) are also not supported.
 }
 \examples{
  set.seed(42)
- dat <- mgcv::gamSim(eg=1, n=400, dist="normal", scale=2, verbose = FALSE)
+ dat <- mgcv::gamSim(eg=1, n=500, dist="normal", scale=2, verbose = FALSE)
  dat.0 <- dat[,1:5]
  
  # well-specified

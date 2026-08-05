@@ -1,0 +1,13 @@
+bibentry(
+  bibtype       = "Misc",
+  title         = "The debiased score test: hunt-and-test for semiparametric hypotheses",
+  author        = c(person("Aditya", "Dhawan"),
+                    person(c("F.", "Richard"), "Guo"),
+                    person(c("Rajen", "D."), "Shah")),
+  year          = "2026",
+  eprint        = "2607.28861",
+  archivePrefix = "arXiv",
+  primaryClass  = "stat.ME",
+  url           = "https://arxiv.org/abs/2607.28861",
+  header        = "To cite dScoreTest in publications, please cite the method paper:"
+)

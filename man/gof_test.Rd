@@ -31,12 +31,17 @@ Debiased score test for goodness of fit
  # log(E[y]) ~ X well-specified
  y0 <- 5 * exp(X[,1] + X[,3]) + rnorm(n) * 3
  fit.0 <- glm(y0 ~ X, family = gaussian(link = "log"), start=rep(1,4))
- gof_test(fit.0)
+ \donttest{gof_test(fit.0)}
  # log(E[y]) ~ X misspecified
  y1 <- y0 + exp(6 * cos(X[,1]/6)^2) / sqrt(n)
  fit.1 <- glm(y1 ~ X, family = gaussian(link = "log"), start=rep(1,4))
- gof_test(fit.1)
+ \donttest{gof_test(fit.1)}
 
+}
+\references{
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+\url{https://arxiv.org/abs/2607.28861}
 }
 \seealso{
 \code{\link{gof_test.glm}}, \code{\link{gof_test.lm}},

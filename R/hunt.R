@@ -60,7 +60,8 @@ hunt_vanilla <- function(fit_hunt_method,
 
 #' Weighted-least-squares hunting
 #'
-#' Hunt by fitting residuals on X, trained by solving a weighted least squares. 
+#' Hunt by fitting residuals on X, trained by solving a weighted least squares.
+#' See Proposition 2 of Dhawan, Guo and Shah (2026).
 #'
 #' @param wls_hunt_method Function with signature \code{wls_hunt_method(y, X, w, ...)} that
 #'   returns a fitted \emph{alternative model} \eqn{\hat{g} \in \mathcal{G}} by
@@ -90,6 +91,12 @@ hunt_vanilla <- function(fit_hunt_method,
 #'     \item{\code{h}}{A function with signature \code{h(X)} giving the hunted
 #'       signal.}
 #'   }
+#'
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
+#'
 #' @export
 hunt_wls <- function(wls_hunt_method,
                          resids, X, X.cols=1:ncol(X),
@@ -125,9 +132,10 @@ hunt_wls <- function(wls_hunt_method,
 
 #' Optimal hunting
 #'
-#' Hunt by fitting residuals on X optimally, trained by solving a weighted 
-#' least squares. The hunted function is also pre-debiased. 
-#' 
+#' Hunt by fitting residuals on X optimally, trained by solving a weighted
+#' least squares. The hunted function is also pre-debiased.
+#' This is the procedure of Section 2.2.1 of Dhawan, Guo and Shah (2026).
+#'
 #'
 #' @param wls_hunt_method Function with signature \code{wls_hunt_method(y, X, w, ...)} that
 #'   returns a fitted \emph{alternative model} \eqn{\hat{g} \in \mathcal{G}} by
@@ -164,9 +172,14 @@ hunt_wls <- function(wls_hunt_method,
 #'   Default \code{stats::predict}.
 #' 
 #' @details
-#' If y is binary, then set \code{binary.y=TRUE}. Meanwhile, 
-#' \code{predict_fun(fit, X, type="response")} must output the predicted probabilities. 
-#' 
+#' If y is binary, then set \code{binary.y=TRUE}. Meanwhile,
+#' \code{predict_fun(fit, X, type="response")} must output the predicted probabilities.
+#'
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
+#'
 #' @return An object of class \code{"hunt"}, a list with elements:
 #'   \describe{
 #'     \item{\code{hunt.fit}}{The fitted hunt model produced by
@@ -178,7 +191,7 @@ hunt_wls <- function(wls_hunt_method,
 #'     \item{\code{X.cols}}{The columns of \code{X} used for the hunt, as
 #'       supplied.}
 #'     \item{\code{h}}{A function with signature \code{h(X)} giving the
-#'       orthogonalised hunted signal.}
+#'       orthogonalized hunted signal.}
 #'   }
 #'
 #' @export

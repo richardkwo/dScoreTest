@@ -28,11 +28,19 @@
 #'   \code{fit.1}.
 #'   S3 methods are provided for \code{glm} (\code{\link{compare_models.glm}}),
 #'   \code{lm} (\code{\link{compare_models.lm}}) and \code{mgcv::gam}
-#'   (\code{\link{compare_models.gam}}).}
+#'   (\code{\link{compare_models.gam}}).
+#'   
+#' \item Use \code{\link{hte_test_conditional}} to test treatment effect 
+#'   heterogeneity.}
 #'
 #' Use \code{\link{dScoreTest}} directly for full control over the score,
 #'   weight, refit and hunt routines: this is the underlying engine that the
 #'   S3 methods wrap. 
+#'
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
 #'
 #' @docType package
 #' @name dScoreTest

@@ -81,14 +81,20 @@ An object of class \code{"hunt"}, a list with elements:
 \item{\code{X.cols}}{The columns of \code{X} used for the hunt, as
 supplied.}
 \item{\code{h}}{A function with signature \code{h(X)} giving the
-orthogonalised hunted signal.}
+orthogonalized hunted signal.}
 }
 }
 \description{
 Hunt by fitting residuals on X optimally, trained by solving a weighted
 least squares. The hunted function is also pre-debiased.
+This is the procedure of Section 2.2.1 of Dhawan, Guo and Shah (2026).
 }
 \details{
 If y is binary, then set \code{binary.y=TRUE}. Meanwhile,
 \code{predict_fun(fit, X, type="response")} must output the predicted probabilities.
+}
+\references{
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+\url{https://arxiv.org/abs/2607.28861}
 }

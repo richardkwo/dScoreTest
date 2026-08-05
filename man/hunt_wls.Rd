@@ -53,4 +53,10 @@ signal.}
 }
 \description{
 Hunt by fitting residuals on X, trained by solving a weighted least squares.
+See Proposition 2 of Dhawan, Guo and Shah (2026).
+}
+\references{
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+\url{https://arxiv.org/abs/2607.28861}
 }

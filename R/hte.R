@@ -35,6 +35,32 @@
 #'      \item{\code{p}}{Number of covariates, which equals \code{ncol(Z)}.}
 #'      }
 #'
+#' @examples
+#' ## A randomized trial in which the treatment effect depends on Z1 only.
+#' set.seed(2)
+#' n <- 500
+#' Z  <- matrix(rnorm(n * 2), n, 2, dimnames = list(NULL, c("Z1", "Z2")))
+#' Tr <- rbinom(n, 1, 0.5)                       # randomized treatment
+#' tau <- Z[, "Z1"]                              # true CATE
+#' y  <- Z[, "Z1"] + Z[, "Z2"] + Tr * tau + rnorm(n)
+#'
+#' \donttest{
+#' ## S = NULL leaves the CATE unrestricted, so it may depend on Z1 and Z2.
+#' fit <- fit_CATE(y, cbind(Tr, Z), S = NULL, randomized = TRUE,
+#'                 folds.crossfit = 2)
+#' cor(fit$CATE_fun(Z), tau)      # close to 1: the true CATE is recovered
+#' sd(fit$CATE_fun(Z))
+#'
+#' ## S = 1 bars Z1 from modifying the effect. Because the true CATE depends
+#' ## on Z1 alone, the fitted CATE then collapses to nearly a constant.
+#' fit0 <- fit_CATE(y, cbind(Tr, Z), S = 1, randomized = TRUE,
+#'                  folds.crossfit = 2)
+#' sd(fit0$CATE_fun(Z))           # much smaller than above
+#'
+#' ## predict() gives the fitted outcome mean mu0(Z) + T * tau(Z).
+#' head(predict(fit, cbind(Tr, Z)))
+#' }
+#'
 #' @export
 fit_CATE <- function(y, X, w=rep(1, nrow(X)),
                      S=1:(ncol(X)-1),
@@ -260,6 +286,11 @@ weight_fun.CATE <- function(fit, X, ...) {
 #' @inherit dScoreTest return
 #'
 #' @seealso \code{\link{fit_CATE}}, \code{\link{dScoreTest}}
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
+#'
 #' @export
 #'
 #' @examples

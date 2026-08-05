@@ -12,6 +12,11 @@
 #'   \code{\link{compare_models.gam}},
 #'   \code{\link{gof_test}}, \code{\link{dScoreTest}}
 #'
+#' @references
+#' Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+#' hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+#' \url{https://arxiv.org/abs/2607.28861}
+#'
 #' @export
 compare_models <- function(fit.0, ...) {
     UseMethod("compare_models")

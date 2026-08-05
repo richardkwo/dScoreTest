@@ -111,7 +111,7 @@ A list of class \code{"dScoreTest"} with elements:
 \item{\code{p.val}}{One-sided p-value (right tail of the standard
 normal).}
 \item{\code{resids}}{Score residuals on the test subsample.}
-\item{\code{h}}{Orthogonalised hunted direction on the test subsample.}
+\item{\code{h}}{Orthogonalized hunted direction on the test subsample.}
 \item{\code{h.raw}}{Hunted direction before the outer debias projection.}
 \item{\code{hunted_fun}}{The debiased hunted function
 \eqn{\hat{h} - \hat{m}_{\hat{h}}}, a function that can be applied to X.}

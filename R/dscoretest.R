@@ -97,6 +97,47 @@
 #' @seealso \code{\link{plot.dScoreTest}}, \code{\link{summary.dScoreTest}},
 #'   \code{\link{hunt_optimal}}, \code{\link{hunt_wls}}, 
 #'   \code{\link{hunt_vanilla}}, \code{\link{new_dScoreTest}}
+#'
+#' @examples
+#' ## An example for customizing a dScoreTest:
+#' ## Conditional mean independence: is E[Y | X] a function of X[, 1:3] alone,
+#' ## i.e. do X4 and X5 carry no further information once X1, X2, X3 are given?
+#' set.seed(1)
+#' n <- 500
+#' X <- matrix(rnorm(n * 5), n, 5)
+#' y     <- X[, 1] + X[, 2]^2 + sin(X[, 3]) + rnorm(n)   # null TRUE
+#' y.alt <- y + X[, 4] * X[, 5]                          # null FALSE
+#'
+#' ## Null model class: an arbitrary function of X[, 1:3], fitted by a
+#' ## regression forest. The fitter and predict_fun subset to those columns,
+#' ## while the hunt still searches all five columns for a direction of
+#' ## misspecification. Note honesty = FALSE with tuning: an underfitted null
+#' ## model is itself misspecified, and the test then (correctly) rejects on
+#' ## that lack of fit rather than on any dependence on X4, X5.
+#' fit_method <- function(y, X, ...)
+#'     grf::regression_forest(X[, 1:3, drop = FALSE], y,
+#'                            honesty = FALSE, tune.parameters = "all")
+#' wls_method <- function(y, X, w, ...)
+#'     grf::regression_forest(X[, 1:3, drop = FALSE], y, sample.weights = w,
+#'                            honesty = FALSE, tune.parameters = "all")
+#' predict_fun <- function(fit, X, ...)
+#'     predict(fit, X[, 1:3, drop = FALSE])$predictions
+#'
+#' ## Square loss l(f, y) = (y - f)^2 / 2 gives the score l'(f, y) = f - y
+#' ## (a negative residual) and the weight l''(f, y) = 1.
+#' score_fun  <- function(fit, y, X, ...) predict_fun(fit, X) - y
+#' weight_fun <- function(fit, X, ...) rep(1, nrow(X))
+#'
+#' \donttest{
+#' ## Null holds: no evidence against it.
+#' dScoreTest(y, X, score_fun, weight_fun, fit_method, wls_method,
+#'            predict_fun = predict_fun)
+#'
+#' ## Null fails: the dependence on X4 and X5 is detected.
+#' dScoreTest(y.alt, X, score_fun, weight_fun, fit_method, wls_method,
+#'            predict_fun = predict_fun)
+#' }
+#'
 #' @export
 dScoreTest <- function(y, X,
                        score_fun, weight_fun,
@@ -296,7 +337,7 @@ dScoreTest <- function(y, X,
 #'     \item{\code{p.val}}{One-sided p-value (right tail of the standard
 #'       normal).}
 #'     \item{\code{resids}}{Score residuals on the test subsample.}
-#'     \item{\code{h}}{Orthogonalised hunted direction on the test subsample.}
+#'     \item{\code{h}}{Orthogonalized hunted direction on the test subsample.}
 #'     \item{\code{h.raw}}{Hunted direction before the outer debias projection.}
 #'     \item{\code{hunted_fun}}{The debiased hunted function
 #'       \eqn{\hat{h} - \hat{m}_{\hat{h}}}, a function that can be applied to X.}

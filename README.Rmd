@@ -116,3 +116,15 @@ weighted-least-squares (`"wls"`), or vanilla (`"vanilla"`) algorithm.
 ```{r plot, fig.width = 9, fig.height = 4.5}
 plot(res)
 ```
+
+## Citation
+
+The methodology is described in:
+
+> Dhawan, A., Guo, F. R. and Shah, R. D. (2026).
+> *The debiased score test: hunt-and-test for semiparametric hypotheses.*
+> arXiv:2607.28861. <https://arxiv.org/abs/2607.28861>
+
+```r
+citation("dScoreTest")
+```

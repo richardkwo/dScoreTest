@@ -51,6 +51,11 @@ Compare two models using the debiased score test
  anova(fit.00, fit.1)
 
 }
+\references{
+Dhawan, A., Guo, F. R. and Shah, R. D. (2026). The debiased score test:
+hunt-and-test for semiparametric hypotheses. arXiv:2607.28861.
+\url{https://arxiv.org/abs/2607.28861}
+}
 \seealso{
 \code{\link{compare_models.glm}}, \code{\link{compare_models.lm}},
 \code{\link{compare_models.gam}},

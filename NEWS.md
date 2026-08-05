@@ -1,3 +1,9 @@
+# dScoreTest 1.0.0
+
+* Added a citation for the method paper, Dhawan, Guo and Shah (2026),
+  <arXiv:2607.28861>.
+* Added more examples.
+
 # dScoreTest 0.2.0
 
 * Method hte_test_conditional() for testing treatment effect heterogeneity. 

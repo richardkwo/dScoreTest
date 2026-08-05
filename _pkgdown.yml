@@ -3,6 +3,11 @@ template:
   bootstrap: 5
   math-rendering: mathjax
 
+home:
+  links:
+  - text: Read the method paper (arXiv)
+    href: https://arxiv.org/abs/2607.28861
+
 reference:
 - title: Goodness-of-fit tests
   desc: Test whether a fitted model is well-specified against a nonparametric alternative.
